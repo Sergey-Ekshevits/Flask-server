@@ -12,21 +12,20 @@
 <body>
     {% block content %}
     {{ super() }}
-    {{ post }}
     <a href="/">На главную</a>
     {% if post %}
-    {{ post[0][1] }}
+    {{ post }}
     {% endif %}
     <form class="formo_2" action="/change_post" method="post" >
         <div class="mb-3">
-            <input  hidden name="id" value="{{ post[0][0] }}" />
+            <input  hidden name="id" value="{{ post.id }}" />
             <label for="exampleFormControlInput1" class="form-label">Email address</label>
-            <input type="text" name="header" value="{{ post[0][1] }}" class="form-control" id="exampleFormControlInput1"
+            <input type="text" name="header" value="{{ post.header }}" class="form-control" id="exampleFormControlInput1"
                 placeholder="name@example.com">
         </div>
         <div class="mb-3">
             <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
-            <textarea class="form-control" name="body" value="{{ post[0][2] }}" id="exampleFormControlTextarea1" rows="3"></textarea>
+            <textarea class="form-control" name="body"  id="exampleFormControlTextarea1" rows="3">{{ post.body }}</textarea>
         </div>
         <button type="submit">
             Изменить
