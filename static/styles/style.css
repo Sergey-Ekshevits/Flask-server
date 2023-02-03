@@ -1,0 +1,11 @@
+.links{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.formo {
+    width: 300px
+}
+ul {
+    list-style-type: none;
+}
