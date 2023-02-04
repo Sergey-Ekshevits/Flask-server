@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    {{ super() }}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./static/style.css">
+    {% endblock %}
+</head>
+<body>
+    {% block content %}
+    {{ super() }}
+    <p>Брат, тут ничего нет, иди-ка <a class="btn-link" href="{{url_for('index')}}">на главную</a>
+    {% endblock %}
+</body>
+</html>
