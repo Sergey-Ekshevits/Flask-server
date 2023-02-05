@@ -18,7 +18,7 @@ def getAllPosts(db, page):
         page = int(page)
     offset = 3
     print(page * offset)
-    record = cursor.execute('SELECT * FROM posts LIMIT 3 OFFSET ?', [(page - 1) * offset])
+    record = cursor.execute('SELECT * FROM posts LIMIT 100 OFFSET ?', [(page - 1) * offset])
     return record.fetchall()    
 
 def create_new_post(db, header, body):
