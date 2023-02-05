@@ -1,4 +1,6 @@
 import sqlite3
+from flask_paginate import Pagination, get_page_parameter
+from contextlib import closing
 def connect_db(app):
     conn=sqlite3.connect(app.config['DATABASE'])
     conn.row_factory = sqlite3.Row
@@ -12,14 +14,19 @@ def post_counter(db):
 
 def getAllPosts(db, page):
     cursor = db.cursor()
+    content = {}
     if(page == None):
         page = 1
     else:
         page = int(page)
     offset = 3
-    print(page * offset)
-    record = cursor.execute('SELECT * FROM posts LIMIT 100 OFFSET ?', [(page - 1) * offset])
-    return record.fetchall()    
+    record = cursor.execute('SELECT * FROM posts LIMIT ? OFFSET ?', [offset, (page - 1) * offset])
+    posts = record.fetchall()
+    total = post_counter(db)
+    content['pagination'] = Pagination(page=page, total=total,
+                                       per_page=offset, bs_version=4)
+    content['posts'] = posts
+    return content
 
 def create_new_post(db, header, body):
     cursor = db.cursor()

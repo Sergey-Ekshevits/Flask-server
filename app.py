@@ -99,8 +99,8 @@ def index():
     db = get_db()
     page = request.args.get('page')
     # print(page)
-    posts = getAllPosts(db, page)
-    return render_template('index.html', posts=posts, post_counter=post_counter(db), title="Блог", menu=menu)
+    content = getAllPosts(db, page)
+    return render_template('index.html', posts=content['posts'], pagination=content['pagination'], post_counter=post_counter(db), title="Блог", menu=menu)
 
 
 @app.route('/delete/<id>')
