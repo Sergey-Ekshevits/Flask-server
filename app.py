@@ -109,7 +109,6 @@ def delete(id):
     delete_post(db,id)
     # cursor.execute('SELECT * FROM posts WHERE id=?', [id])
     # req=cursor.fetchone()['id']
-    print (id)
     return redirect(url_for('index'))
 
 
