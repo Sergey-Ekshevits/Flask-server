@@ -166,6 +166,7 @@ def modify_post(id):
     # new_header=request.form.get('header')
     # new_body=request.form.get('body')
     # change_post(new_header,new_body)
+    print('test')
     return render_template('change_post.html', post=post, menu=menu)
 
     # Update query
