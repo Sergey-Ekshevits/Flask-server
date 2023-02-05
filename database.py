@@ -55,3 +55,7 @@ def delete_post(db,id):
     db.commit()
     # cursor.execute('SELECT * FROM posts WHERE id=?', [id])
     # req=cursor.fetchone()['id']
+def get_post(db,id):
+    cursor = db.cursor()
+    res = cursor.execute('SELECT * FROM posts WHERE id=?', [id])
+    return res.fetchone()

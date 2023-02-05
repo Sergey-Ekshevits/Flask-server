@@ -2,7 +2,7 @@ from flask import Flask
 from markupsafe import escape
 from flask import render_template, request, redirect, g, url_for
 import os
-from database import connect_db, post_counter, getAllPosts, create_new_post, change_post_func, delete_post
+from database import connect_db, post_counter, getAllPosts, create_new_post, change_post_func, delete_post, get_post
 
 DATABASE = 'blogdb.db'
 DEBUG = False
@@ -158,14 +158,12 @@ def change_post():
 @app.route('/modify_post/<id>', methods=['GET'])
 def modify_post(id):
     db = get_db()
-    cursor = db.cursor()
-    res = cursor.execute('SELECT * FROM posts WHERE id=?', [id])
-    post = res.fetchone()
+    post = get_post(db,id)
     # print(request.form)
     # new_header=request.form.get('header')
     # new_body=request.form.get('body')
     # change_post(new_header,new_body)
-    print('test')
+
     return render_template('change_post.html', post=post, menu=menu)
 
     # Update query
