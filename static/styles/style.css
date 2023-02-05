@@ -24,3 +24,17 @@ ul {
     padding: .1em .25em;
     font-size: 150%;
 }
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.posts_count {
+    text-align: center;
+}
+
+.card {
+    width: 400px;
+    margin: 10px;
+}
