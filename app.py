@@ -2,9 +2,7 @@ from flask import Flask
 from markupsafe import escape
 from flask import render_template, request, redirect, g, url_for
 import os
-from database import connect_db, post_counter, getAllPosts, create_new_post, change_post_func, delete_post, get_post
-import database
-from database import connect_db, post_counter, getAllPosts, create_new_post, change_post_func, delete_post
+from database import *
 
 DATABASE = 'blogdb.db'
 DEBUG = False
