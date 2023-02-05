@@ -2,7 +2,8 @@ from flask import Flask
 from markupsafe import escape
 from flask import render_template, request, redirect, g, url_for
 import os
-from database import connect_db, post_counter, getAllPosts, create_new_post, change_post_func, delete_post
+import database
+from database import getPost, connect_db, post_counter, getAllPosts, create_new_post, change_post_func, delete_post
 
 DATABASE = 'blogdb.db'
 DEBUG = False
@@ -119,10 +120,7 @@ def delete(id):
 @app.route('/post/<id>')
 def post(id):
     db = get_db()
-    # post = getPost(db, id) // надо сделать
-    cursor = db.cursor()
-    res = cursor.execute('SELECT * FROM posts WHERE id=?', [id])
-    post = res.fetchone()
+    post = getPost(db, id)
     print(post)
     return render_template('post.html', post=post, menu=menu)
 
