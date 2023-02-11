@@ -3,10 +3,11 @@ from flask import render_template, request, redirect, g, url_for
 import os
 from database import *
 
-from database_alchemy import db, User
+from db.db import db
+from db.User import User
 
 DATABASE = 'blogdb.db'
-DATABASE2 = 'blogdb3.db'
+DATABASE2 = 'blogdb2.db'
 DEBUG = False
 SECRET_KEY = '239184u0dasfdasgert3243dfasdfAW32%^'
 app = Flask(__name__)
@@ -16,20 +17,23 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.app_context().push()
 db.init_app(app)
-User(name='john', email='jd@example.com', password='Biology student')
 
+
+# db.create_all()
+# db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
+# db.session.commit()
 
 # def connect_db():
 #     conn=sqlite3.connect(app.config['DATABASE'])
 #     conn.row_factory = sqlite3.Row
 #     return conn
 
-def create_db():
-    db = connect_db(app)
-    with app.open_resource('sqlq.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
-    db.commit()
-    db.close()
+# def create_db():
+#     db = connect_db(app)
+#     with app.open_resource('sqlq.sql', mode='r') as f:
+#         db.cursor().executescript(f.read())
+#     db.commit()
+#     db.close()
 
 
 def get_db():
@@ -43,39 +47,6 @@ def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
 
-
-# create_db()
-# cursor = get_db().cursor()
-# create_db()
-# try:
-#     sqlite_connection = sqlite3.connect('sqlite_python.db')
-#     cursor = sqlite_connection.cursor()
-#     print("База данных создана и успешно подключена к SQLite")
-
-
-# with sqlite3.connect('sqlite_python.db', check_same_thread=False) as db:
-#     db.row_factory = sqlite3.Row
-#     cursor = db.cursor()
-
-# sqlite_create_table_query = '''CREATE TABLE IF NOT EXISTS posts (
-#                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-#                                     header TEXT NOT NULL,
-#                                     body TEXT NOT NULL,
-#                                     timestamp DATATIME DEFAULT CURRENT_TIMESTAMP
-#                                     );'''
-
-# cursor.execute(sqlite_create_table_query)
-# record = cursor.fetchall()
-# print("Версия базы данных SQLite: ", record)
-# cursor.close()
-
-
-# # except sqlite3.Error as error:
-# # print("Ошибка при подключении к sqlite", error)
-# # finally:
-# #     if (sqlite_connection):
-# #         sqlite_connection.close()
-# #         print("Соединение с SQLite закрыто")
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -100,11 +71,22 @@ def page_not_found2(error):
 #
 #     # Commit the changes
 #     db.commit()
-#     # db.close()
+#  # db.close()
 
-
-menu = ['Главная', 'Купить этот сайт', 'О нас']
-
+menu = [
+    {
+        "name": "Главная",
+        "link": "/"
+    },
+    {
+        "name": "О нас",
+        "link": "/"
+    },
+    {
+        "name": "Регистрация",
+        "link": "/registration"
+    }
+]
 
 @app.route('/')
 def index():

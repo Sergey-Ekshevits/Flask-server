@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    {{ super() }}
+    <title>Document</title>
+    {% endblock %}
+</head>
+<body>
+    {% block content -%}
+    {{ super() }}
+        <h1>Registration</h1>
+    {% endblock %}
+</body>
+</html>
