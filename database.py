@@ -38,13 +38,10 @@ def create_new_post(db, header, body):
 def change_post_func(db,new_header, new_body, id):
     cursor = db.cursor()
     query = "UPDATE posts SET header = ?, body = ? WHERE id = ?"
-    # id=2
     # Values to update
     values = (new_header, new_body, id)
-
     # Execute the update query
     cursor.execute(query, values)
-
     # Commit the changes
     db.commit()
     # db.close()

@@ -1,15 +1,23 @@
 from flask import Flask
-from markupsafe import escape
 from flask import render_template, request, redirect, g, url_for
 import os
 from database import *
 
-DATABASE = 'blogdb.db'
-DEBUG = False
-SECRET_KEY ='239184u0dasfdasgert3243dfasdfAW32%^'
+from database_alchemy import db, User
 
+DATABASE = 'blogdb.db'
+DATABASE2 = 'blogdb3.db'
+DEBUG = False
+SECRET_KEY = '239184u0dasfdasgert3243dfasdfAW32%^'
 app = Flask(__name__)
-app.config.update(dict(DATABASE = os.path.join(app.root_path,'blogdb.db')))
+app.config.update(dict(DATABASE=os.path.join(app.root_path, DATABASE)))
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'sqlite:///' + os.path.join(app.root_path, DATABASE2)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.app_context().push()
+db.init_app(app)
+User(name='john', email='jd@example.com', password='Biology student')
+
 
 # def connect_db():
 #     conn=sqlite3.connect(app.config['DATABASE'])
@@ -17,21 +25,25 @@ app.config.update(dict(DATABASE = os.path.join(app.root_path,'blogdb.db')))
 #     return conn
 
 def create_db():
-    db=connect_db(app)
-    with app.open_resource('sqlq.sql', mode = 'r') as f:
+    db = connect_db(app)
+    with app.open_resource('sqlq.sql', mode='r') as f:
         db.cursor().executescript(f.read())
     db.commit()
     db.close()
 
+
 def get_db():
-    if not hasattr(g,'link_db'):
+    if not hasattr(g, 'link_db'):
         g.link_db = connect_db(app)
     return g.link_db
+
 
 @app.teardown_appcontext
 def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
+
+
 # create_db()
 # cursor = get_db().cursor()
 # create_db()
@@ -106,7 +118,7 @@ def index():
 @app.route('/delete/<id>')
 def delete(id):
     db = get_db()
-    delete_post(db,id)
+    delete_post(db, id)
     # cursor.execute('SELECT * FROM posts WHERE id=?', [id])
     # req=cursor.fetchone()['id']
     return redirect(url_for('index'))
@@ -121,6 +133,7 @@ def post(id):
     db = get_db()
     post = get_post(db, id)
     return render_template('post.html', post=post, menu=menu)
+
 
 @app.route('/create_post', methods=['POST'])
 def create_post():
@@ -144,7 +157,7 @@ def change_post():
     new_header = request.form.get('header')
     new_body = request.form.get('body')
     id = request.form.get('id')
-    change_post_func(db,new_header, new_body, id)
+    change_post_func(db, new_header, new_body, id)
     # print (post)
     # print (new_header,new_body)
     # print (posts[0][0])
@@ -154,7 +167,7 @@ def change_post():
 @app.route('/modify_post/<id>', methods=['GET'])
 def modify_post(id):
     db = get_db()
-    post = get_post(db,id)
+    post = get_post(db, id)
     # print(request.form)
     # new_header=request.form.get('header')
     # new_body=request.form.get('body')
@@ -164,5 +177,5 @@ def modify_post(id):
 
     # Update query
     # with app.test_request_context():
-        # print (post_counter())
-        # print(delete(1))
+    # print (post_counter())
+    # print(delete(1))
