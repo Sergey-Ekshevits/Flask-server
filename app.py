@@ -83,8 +83,8 @@ menu = [
         "link": "/"
     },
     {
-        "name": "Регистрация",
-        "link": "/registration"
+        "name": "Авторизация",
+        "link": "/authorization"
     }
 ]
 
@@ -157,6 +157,12 @@ def modify_post(id):
 
     return render_template('change_post.html', post=post, menu=menu)
 
+@app.route('/authorization', methods=['GET', 'POST'])
+def authorization():
+    return render_template('authorization.html', menu=menu)
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    return render_template('registration.html', menu=menu)
     # Update query
     # with app.test_request_context():
     # print (post_counter())

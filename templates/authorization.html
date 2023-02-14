@@ -3,25 +3,23 @@
 <html lang="en">
 <head>
     {% block head %}
-        {{ super() }}
-        <title>Document</title>
+    {{ super() }}
+    <title>Document</title>
     {% endblock %}
 </head>
 <body>
 {% block content -%}
     {{ super() }}
-    <h1>Registration</h1>
+    <h1>Авторизация</h1>
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash{{ cat }}">{{ msg }}</div>
     {% endfor %}
     <form action="/login" method="post" class="form-contact">
-
-        <p><label>Имя</label> <input type="text" name="user_name" value="" required/>
         <p><label>E-mail</label> <input type="text" name="email" value="" required/>
         <p><label>Password</label> <input type="text" name="psw" value="" required/>
-        <p><label>Password again</label> <input type="text" name="psw" value="" required/>
-        <p><input type="submit" value="Регистрация"/>
-        <p><a href="{{ url_for('index') }}">На главную</a></p>
+        <p><input type="checkbox" name="remainme"/> Запомнить меня
+        <p><input type="submit" value="Войти"/>
+        <p><a href="{{ url_for('registration') }}">Регистрация</a></p>
     </form>
 {% endblock %}
 </body>
