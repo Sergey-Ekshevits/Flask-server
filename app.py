@@ -60,22 +60,6 @@ def page_not_found(error):
 def page_not_found2(error):
     return render_template('404.html', menu=menu, title='Страница не найдена')
 
-
-# def change_post_func(new_header, new_body, id):
-#     db = get_db()
-#     cursor = db.cursor()
-#     query = "UPDATE posts SET header = ?, body = ? WHERE id = ?"
-#     # id=2
-#     # Values to update
-#     values = (new_header, new_body, id)
-#
-#     # Execute the update query
-#     cursor.execute(query, values)
-#
-#     # Commit the changes
-#     db.commit()
-#  # db.close()
-
 menu = [
     {
         "name": "Главная",
@@ -107,11 +91,6 @@ def delete(id):
     # cursor.execute('SELECT * FROM posts WHERE id=?', [id])
     # req=cursor.fetchone()['id']
     return redirect(url_for('index'))
-
-
-# @app.route('/projects/')
-# def projects():
-#     return 'The project page'
 
 @app.route('/post/<id>')
 def post(id):
@@ -175,7 +154,8 @@ def register():
     if request.method=="POST":
         if len(request.form['user_name'])>3 and len(request.form['email'])>4 and request.form['psw'] == request.form['pswrpt']:
             hash=generate_password_hash(request.form['psw'])
-            #add user method
+            db.session.add(User(name=request.form['user_name'], email=request.form['email'], password=hash))
+            db.session.commit()
             flash("Успешная регистрация")
             print("ok")
             return redirect(url_for('authorization'))
