@@ -1,7 +1,8 @@
-from flask import Flask
-from flask import render_template, request, redirect, g, url_for
+from flask import Flask, session
+from flask import render_template, request, redirect, g, url_for, flash, get_flashed_messages
 import os
 from database import *
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from db.db import db
 from db.User import User
@@ -11,13 +12,15 @@ DATABASE2 = 'blogdb2.db'
 DEBUG = False
 SECRET_KEY = '239184u0dasfdasgert3243dfasdfAW32%^'
 app = Flask(__name__)
+
+# sess = session()
 app.config.update(dict(DATABASE=os.path.join(app.root_path, DATABASE)))
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(app.root_path, DATABASE2)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.app_context().push()
 db.init_app(app)
-
+app.secret_key = SECRET_KEY
 
 # db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
@@ -167,3 +170,16 @@ def registration():
     # with app.test_request_context():
     # print (post_counter())
     # print(delete(1))
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method=="POST":
+        if len(request.form['user_name'])>3 and len(request.form['email'])>4 and request.form['psw'] == request.form['pswrpt']:
+            hash=generate_password_hash(request.form['psw'])
+            #add user method
+            flash("Успешная регистрация")
+            print("ok")
+            return redirect(url_for('authorization'))
+        else:
+            flash("Ошибка регистрации")
+            print("Nok")
+        return render_template('registration.html', menu=menu)
