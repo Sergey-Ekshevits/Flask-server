@@ -11,7 +11,7 @@
 {% block content -%}
     {{ super() }}
     <h1>Registration</h1>
-    {% for msg in get_flashed_messages(True) %}
+    {% for msg in get_flashed_messages() %}
         <div class="flash">{{ msg }}</div>
     {% endfor %}
     <form action="/register" method="post" class="form-contact">

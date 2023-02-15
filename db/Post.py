@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 import User
 from db.db import db
 
@@ -9,7 +9,7 @@ class Post(db.Model):
     title = Column(String, unique=True)
     body = Column(String, nullable=False)
     owner = Column(String, ForeignKey('users.name'))
-    # date_created =
+    date_created = Column(DateTime)
 
     # def __repr__(self):
     #     return "<User(name='%s', email='%s', password='%s')>" % (
