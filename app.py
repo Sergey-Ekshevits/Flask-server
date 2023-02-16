@@ -113,6 +113,7 @@ def delete(id):
 
 
 @app.route('/post/<id>')
+@login_required
 def post(id):
     db = get_db()
     post = get_post(db, id)
