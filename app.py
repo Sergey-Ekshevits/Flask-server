@@ -1,9 +1,8 @@
-from flask import Flask, session
-from flask import render_template, request, redirect, g, url_for, flash, get_flashed_messages
 import os
+from flask import Flask
+from flask import render_template, request, redirect, g, url_for
 from database import *
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+from flask_login import LoginManager, current_user, login_required
 
 from db.db import db
 from db.User import User
@@ -26,7 +25,9 @@ app.secret_key = SECRET_KEY
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+login_manager.login_view = 'auth.login'
+login_manager.login_message='Авторизуйтесь для доступа к странице'
+login_manager.login_message_category='success'
 
 # db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
@@ -88,7 +89,6 @@ menu = [
 
 @app.route('/')
 # @login_required
-# @login_manager.request_loader
 def index():
     db = get_db()
     page = request.args.get('page')
@@ -149,6 +149,7 @@ def change_post():
 
 
 @app.route('/modify_post/<id>', methods=['GET'])
+@login_required
 def modify_post(id):
     db = get_db()
     post = get_post(db, id)
@@ -160,58 +161,9 @@ def modify_post(id):
     return render_template('change_post.html', post=post, menu=menu)
 
 
-@app.route('/authorization', methods=['GET', 'POST'])
-def authorization():
-    print(current_user)
-    return render_template('authorization.html', menu=menu)
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    email = request.form.get('email')
-    password = request.form.get('psw')
-    if not password or not email:
-        flash("Введите данные")
-        return redirect(url_for('authorization'))
-    remember = True if request.form.get('remainme') else False
-    user = User.query.filter_by(email=email).first()
-
-    if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
-        return redirect(url_for('authorization'))
-    flash("Успешная авторизация")
-    login_user(user, remember=remember)
-    return redirect(url_for('authorization'))
 
 
-@app.route('/registration', methods=['GET', 'POST'])
-def registration():
-    return render_template('registration.html', menu=menu)
-    # Update query
-    # with app.test_request_context():
-    # print (post_counter())
-    # print(delete(1))
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == "POST":
-        if len(request.form['user_name']) > 3 and len(request.form['email']) > 4 and request.form['psw'] == \
-                request.form['pswrpt']:
-            hash = generate_password_hash(request.form['psw'])
-            db.session.add(User(name=request.form['user_name'], email=request.form['email'], password=hash))
-            db.session.commit()
-            flash("Успешная регистрация")
-            print("ok")
-            return redirect(url_for('authorization'))
-        else:
-            flash("Ошибка регистрации")
-            print("Nok")
-        return render_template('registration.html', menu=menu)
-
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for("authorization"))
