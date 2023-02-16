@@ -12,23 +12,25 @@ auth = Blueprint('auth', __name__,
 
 @auth.route('/authorization', methods=['GET', 'POST'])
 def authorization():
-    return render_template('authorization.html')
+    form = LoginForm()
+
+    return render_template('authorization.html', form=form)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+
     # next_url = request.form.get("next")
     # print(next_url)
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     email = request.form.get('email')
-    password = request.form.get('psw')
+    password = request.form.get('password')
     if not password or not email:
         flash("Введите данные")
         return redirect(url_for('auth.authorization'))
-    remember = True if request.form.get('remainme') else False
+    remember = True if request.form.get('rememberme') else False
     user = User.query.filter_by(email=email).first()
-
     if not user or not check_password_hash(user.password, password):
         flash('Please check your login details and try again.')
         return redirect(url_for('auth.authorization'))
@@ -60,6 +62,7 @@ def logout():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == "POST":
+
         if len(request.form['user_name']) > 3 and len(request.form['email']) > 4 and request.form['psw'] == \
                 request.form['pswrpt']:
             hash = generate_password_hash(request.form['psw'])
