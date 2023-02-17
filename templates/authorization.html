@@ -20,6 +20,11 @@
         <p>{{ form.password.label() }} {{ form.password() }}
         <p>{{ form.rememberme.label() }} {{ form.rememberme() }}
         <p>{{ form.submit() }}
+        <input
+                type="hidden"
+                name="next"
+                value="{{ request.args.get('next', '') }}"
+        />
 
 {#        <p><label>E-mail</label> <input type="text" name="email" value="" required/>#}
 {#        <p><label>Password</label> <input type="text" name="psw" value="" required/>#}
