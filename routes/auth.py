@@ -4,48 +4,48 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from db.User import User
 from db.db import db
-from forms import LoginForm
+from forms import LoginForm, RegisterForm
 
 auth = Blueprint('auth', __name__,
                  template_folder='templates')
 
 
-@auth.route('/authorization', methods=['GET', 'POST'])
-def authorization():
-    form = LoginForm()
-
-    return render_template('authorization.html', form=form)
+# @auth.route('/authorization', methods=['GET', 'POST'])
+# def authorization():
+#     form = LoginForm()
+#
+#     return render_template('authorization.html', form=form)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-
+    form = LoginForm()
+    email = request.form.get('email')
+    password = request.form.get('password')
     # next_url = request.form.get("next")
     # print(next_url)
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    email = request.form.get('email')
-    password = request.form.get('password')
     if not password or not email:
         flash("Введите данные")
-        return redirect(url_for('auth.authorization'))
+        # return redirect(url_for('auth.authorization'))
     remember = True if request.form.get('rememberme') else False
     user = User.query.filter_by(email=email).first()
     if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
-        return redirect(url_for('auth.authorization'))
+        # flash('Please check your login details and try again.')
+        return render_template('authorization.html', form=form)
     # flash("Успешная авторизация")
     login_user(user, remember=remember)
     # if next_url:
     #     return redirect(next_url)
     #     print(next_url)
     #     # return redirect(url_for("profile"))
-    return redirect(url_for('index'))
+    return render_template('authorization.html', form=form)
 
 
-@auth.route('/registration', methods=['GET', 'POST'])
-def registration():
-    return render_template('registration.html')
+# @auth.route('/registration', methods=['GET', 'POST'])
+# def registration():
+#     return render_template('registration.html')
     # Update query
     # with app.test_request_context():
     # print (post_counter())
@@ -56,22 +56,24 @@ def registration():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("auth.authorization"))
+    return redirect(url_for("auth.login"))
 
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
+    form=RegisterForm()
     if request.method == "POST":
 
-        if len(request.form['user_name']) > 3 and len(request.form['email']) > 4 and request.form['psw'] == \
-                request.form['pswrpt']:
-            hash = generate_password_hash(request.form['psw'])
-            db.session.add(User(name=request.form['user_name'], email=request.form['email'], password=hash))
+        if  request.form.get('password') == request.form.get('passwordrpt'):
+            hash = generate_password_hash(request.form.get('password'))
+            new_user = User(name=request.form.get('name'), email=request.form.get('email'), password=hash)
+            db.session.add(new_user)
             db.session.commit()
             flash("Успешная регистрация")
             print("ok")
-            return redirect(url_for('auth.authorization'))
+            return redirect(url_for('auth.login'))
         else:
             flash("Ошибка регистрации")
             print("Nok")
-        return render_template('registration.html')
+        return render_template('registration.html',form=form)
+    return render_template('registration.html',form=form)

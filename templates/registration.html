@@ -14,13 +14,15 @@
     {% for msg in get_flashed_messages() %}
         <div class="flash">{{ msg }}</div>
     {% endfor %}
-    <form action="/register" method="post" class="form-contact">
+    <form action="{{ url_for('auth.register') }}" method="post" class="form-contact">
 
-        <p><label>Имя</label> <input type="text" name="user_name" value="" required/>
-        <p><label>E-mail</label> <input type="text" name="email" value="" required/>
-        <p><label>Password</label> <input type="text" name="psw" value="" required/>
-        <p><label>Password repeat</label> <input type="text" name="pswrpt" value="" required/>
-        <p><input type="submit" value="Регистрация"/>
+        <p>{{ form.hidden_tag() }}
+        <p>{{ form.name.label() }} {{ form.name() }}
+        <p>{{ form.email.label() }} {{ form.email() }}
+        <p>{{ form.password.label() }} {{ form.password() }}
+        <p>{{ form.passwordrpt.label() }} {{ form.passwordrpt() }}
+
+        <p>{{ form.submit() }}
         <p><a href="{{ url_for('index') }}">На главную</a></p>
     </form>
 {% endblock %}
