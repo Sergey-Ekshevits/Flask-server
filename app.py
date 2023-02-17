@@ -4,9 +4,11 @@ from flask import render_template, request, redirect, g, url_for
 from database import *
 from flask_login import LoginManager, current_user, login_required
 
+from db.Post import Post
 from db.db import db
 from db.User import User
 from routes.auth import auth
+from routes.posts import post
 
 DATABASE = 'blogdb.db'
 DATABASE2 = 'blogdb2.db'
@@ -14,6 +16,7 @@ DEBUG = False
 SECRET_KEY = '239184u0dasfdasgert3243dfasdfAW32%^'
 app = Flask(__name__)
 app.register_blueprint(auth)
+app.register_blueprint(post)
 # sess = session()
 app.config.update(dict(DATABASE=os.path.join(app.root_path, DATABASE)))
 app.config['SQLALCHEMY_DATABASE_URI'] = \
@@ -91,8 +94,10 @@ menu = [
 # @login_required
 def index():
     db = get_db()
+    posts=Post.query.filter_by(owner=current_user.id).all()
+    print(posts)
     page = request.args.get('page')
-    posts = getAllPosts(db, page)
+    # posts = getAllPosts(db, page)
     return render_template(
         'index.html',
         posts=posts,

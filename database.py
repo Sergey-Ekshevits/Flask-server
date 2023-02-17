@@ -20,7 +20,7 @@ def getAllPosts(db, page):
     else:
         page = int(page)
     offset = 3
-    print(page * offset)
+    # print(page * offset)
     record = cursor.execute('SELECT * FROM posts LIMIT 100 OFFSET ?', [(page - 1) * offset])
     return record.fetchall()
 

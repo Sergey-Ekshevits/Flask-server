@@ -24,7 +24,7 @@
     {% else %}
         <h1>Нет</h1>
     {% endif %}
-    <form class="formo" action="/create_post" method="post">
+    <form class="formo" action="{{ url_for("post.create_post") }}" method="post">
         <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label">Email address</label>
             <input type="text" name="header" class="form-control" id="exampleFormControlInput1"
@@ -49,7 +49,7 @@
     <div class="card">
         <!-- <img src="..." class="card-img-top" alt="..."> -->
         <div class="card-body">
-          <h5 class="card-title">{{post.header}}</h5>
+          <h5 class="card-title">{{post.title}}</h5>
           <p class="card-text">{{post.body}}</p>
           <div class="buttons">
             <a href="post/{{post.id}}" class="btn btn-success">Go somewhere</a>
