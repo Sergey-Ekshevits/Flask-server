@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     name = Column(String)
     email = Column(String, unique=True)
     password = Column(String)
-
+    posts = db.relationship('Post')
     def __repr__(self):
         return "<User(name='%s', email='%s', password='%s')>" % (
             self.name,
