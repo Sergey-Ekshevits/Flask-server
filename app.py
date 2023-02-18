@@ -95,7 +95,7 @@ menu = [
 def index():
     db = get_db()
     posts=Post.query.all()
-    print(posts)
+    # print(posts)
     page = request.args.get('page')
     # posts = getAllPosts(db, page)
     return render_template(
@@ -154,17 +154,17 @@ def change_post():
     return redirect(url_for('index'))
 
 
-@app.route('/modify_post/<id>', methods=['GET'])
-@login_required
-def modify_post(id):
-    db = get_db()
-    post = get_post(db, id)
-    # print(request.form)
-    # new_header=request.form.get('header')
-    # new_body=request.form.get('body')
-    # change_post(new_header,new_body)
-
-    return render_template('change_post.html', post=post, menu=menu)
+# @app.route('/modify_post/<id>', methods=['GET'])
+# @login_required
+# def modify_post(id):
+#     # db = get_db()
+#     # post = get_post(db, id)
+#     # print(request.form)
+#     # new_header=request.form.get('header')
+#     # new_body=request.form.get('body')
+#     # change_post(new_header,new_body)
+#
+#     return render_template('change_post.html', post=post, menu=menu)
 
 
 
