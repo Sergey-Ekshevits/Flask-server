@@ -18,9 +18,14 @@ def create_post():
     body = request.form.get('body')
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
-    post=Post(title=header, body=body, owner=current_user.id, date_created=time_stamp)
+    post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp)
     db.session.add(post)
     db.session.commit()
     print(post)
     return redirect(url_for('index'))
 
+
+@post.route('/post/<id>')
+def show_post(id):
+    post = Post.query.filter_by(id=id).first()
+    return render_template('post.html', post=post)

@@ -94,7 +94,7 @@ menu = [
 # @login_required
 def index():
     db = get_db()
-    posts=Post.query.filter_by(owner=current_user.id).all()
+    posts=Post.query.all()
     print(posts)
     page = request.args.get('page')
     # posts = getAllPosts(db, page)
@@ -117,24 +117,24 @@ def delete(id):
     return redirect(url_for('index'))
 
 
-@app.route('/post/<id>')
-@login_required
-def post(id):
-    db = get_db()
-    post = get_post(db, id)
-    return render_template('post.html', post=post, menu=menu)
+# @app.route('/post/<id>')
+# # @login_required
+# def post(id):
+#     db = get_db()
+#     post = get_post(db, id)
+#     return render_template('post.html', post=post, menu=menu)
 
 
-@app.route('/create_post', methods=['POST'])
-def create_post():
-    db = get_db()
-    print(request.form)
-    header = request.form.get('header')
-    body = request.form.get('body')
-    id = request.form.get('id')
-    create_new_post(db, header, body)
-    print(id)
-    return redirect(url_for('index'))
+# @app.route('/create_post', methods=['POST'])
+# def create_post():
+#     db = get_db()
+#     print(request.form)
+#     header = request.form.get('header')
+#     body = request.form.get('body')
+#     id = request.form.get('id')
+#     create_new_post(db, header, body)
+#     print(id)
+#     return redirect(url_for('index'))
 
 
 @app.route('/change_post', methods=['POST'])

@@ -19,7 +19,10 @@
     {{ post }}
     <a href="/">На главную</a>
     {% if post %}
-        {{ post[0][1] }}
+        <p>{{ post.title }}</p>
+        <p>{{ post.body }}</p>
+        <p>{{ post.user.name }}</p>
+
     {% endif %}
     {% endblock %}
 </body>
