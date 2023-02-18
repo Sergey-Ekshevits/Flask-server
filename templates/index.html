@@ -57,9 +57,12 @@
                     <p class="card-text">{{ post.body }}</p>
                     <p class="card-text">Автор: {{ post.user.name }}</p>
                     <div class="buttons">
+
                         <a href="{{ url_for('post.show_post', id=post.id) }}" class="btn btn-success">Go somewhere</a>
-                        <a href="delete/{{ post.id }}" class="btn btn-danger">Delete</a>
+                       {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('post.delete_post', id=post.id) }}" class="btn btn-danger">Delete</a>
                         <a href="modify_post/{{ post.id }}" class="btn btn-warning">Modify</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

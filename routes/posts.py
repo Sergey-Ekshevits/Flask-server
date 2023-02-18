@@ -3,6 +3,7 @@ import time
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
+from sqlalchemy import select, update, delete, values
 
 from db.Post import Post
 from db.db import db
@@ -29,3 +30,12 @@ def create_post():
 def show_post(id):
     post = Post.query.filter_by(id=id).first()
     return render_template('post.html', post=post)
+@post.route('/delete/<id>')
+def delete_post(id):
+    Post.query.filter_by(id=id).delete()
+    # print(post_del,"1212321312")
+    # db.session.delete(post_del)
+    db.session.commit()
+    # cursor.execute('SELECT * FROM posts WHERE id=?', [id])
+    # req=cursor.fetchone()['id']
+    return redirect(url_for('index'))

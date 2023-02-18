@@ -108,13 +108,13 @@ def index():
     )
 
 
-@app.route('/delete/<id>')
-def delete(id):
-    db = get_db()
-    delete_post(db, id)
-    # cursor.execute('SELECT * FROM posts WHERE id=?', [id])
-    # req=cursor.fetchone()['id']
-    return redirect(url_for('index'))
+# @app.route('/delete/<id>')
+# def delete(id):
+#     db = get_db()
+#     delete_post(db, id)
+#     # cursor.execute('SELECT * FROM posts WHERE id=?', [id])
+#     # req=cursor.fetchone()['id']
+#     return redirect(url_for('index'))
 
 
 # @app.route('/post/<id>')
