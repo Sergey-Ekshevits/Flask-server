@@ -32,8 +32,8 @@
             </ul>
             <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
                   action="{{ url_for('search') }}" method="get" class="form-contact" name="search">
-                {{ search_form.search_field() }}
-                {{ search_form.submit() }}
+                {{ search_form.search_field(class_="form-style") }}
+                {{ search_form.submit(class_="btn btn-primary") }}
             </form>
             <div class="col-md-1 text-end">
                 {% if not current_user.is_authenticated %}

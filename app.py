@@ -1,4 +1,6 @@
 import os
+from datetime import datetime
+
 from flask import Flask
 from flask import render_template, request, redirect, g, url_for
 from database import *
@@ -97,15 +99,19 @@ def base():
 @app.route('/')
 # @login_required
 def index():
-    db = get_db()
     posts=Post.query.all()
-    page = request.args.get('page')
+    # posts = db.session.query(Post).all()
+    # posts2 = db.session.query(Post).join(User).filter(Post.owner == current_user.id).all()
+    # test = db.session.query(User, Post).filter(Post.owner == current_user.id).all()
+
+    # print(posts2)
+    # page = request.args.get('page')
     # posts = getAllPosts(db, page)
     return render_template(
         'index.html',
         posts=posts,
         current_user=current_user,
-        post_counter=post_counter(db),
+        # post_counter=post_counter(db),
         title="Блог",
         menu=menu,
     )
@@ -178,7 +184,11 @@ def search():
 
 
 
-
-
+@app.template_filter('formatdatetime')
+def format_datetime(value, format="%d %b %Y %I:%M %p"):
+    """Format a date time to (Default): d Mon YYYY HH:MM P"""
+    if value is None:
+        return ""
+    return datetime.fromtimestamp(int(value)).strftime(format)
 
 
