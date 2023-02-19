@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        {{ super() }}
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% endblock %}
+    <title>Title</title>
+</head>
+<body>
+{% block content -%}
+    {{ super() }}
+    <h1>Вы искали:</h1>
+    <h3>{{ searched }}</h3>
+    <p>Найдено постов: {{ posts|length }}</p>
+    <div class="d-flex flex-wrap justify-content-center">
+        {% for post in posts %}
+            <div class="card">
+                <!-- <img src="..." class="card-img-top" alt="..."> -->
+                <div class="card-body">
+                    <h5 class="card-title">Заголовок: {{ post.title }}</h5>
+                    <p class="card-text">{{ post.body }}</p>
+                    <p class="card-text">Автор: {{ post.user.name }}</p>
+                    <div class="buttons">
+
+                        <a href="{{ url_for('post.show_post', id=post.id) }}" class="btn btn-success">Go somewhere</a>
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('post.delete_post', id=post.id) }}" class="btn btn-danger">Delete</a>
+                            <a href="{{ url_for('post.change_post', id=post.id) }}" class="btn btn-warning">Modify</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+</body>
+</html>

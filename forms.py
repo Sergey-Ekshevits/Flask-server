@@ -14,3 +14,6 @@ class RegisterForm(FlaskForm):
     passwordrpt = PasswordField("Repeat password", validators=[DataRequired(), Length(min=4,max=99)])
     name = StringField("Имя", validators=[DataRequired(), Length(min=2,max=99)])
     submit = SubmitField("Регистрация")
+class SearchForm(FlaskForm):
+    search_field=SearchField("Поиск", validators=[DataRequired()])
+    submit = SubmitField("Search")

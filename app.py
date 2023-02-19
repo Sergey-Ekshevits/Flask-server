@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template, request, redirect, g, url_for
 from database import *
 from flask_login import LoginManager, current_user, login_required
+from forms import SearchForm
 
 from db.Post import Post
 from db.db import db
@@ -89,7 +90,10 @@ menu = [
         "link": "/authorization"
     }
 ]
-
+@app.context_processor
+def base():
+    form=SearchForm()
+    return dict(form=form)
 @app.route('/')
 # @login_required
 def index():
@@ -104,8 +108,17 @@ def index():
         current_user=current_user,
         post_counter=post_counter(db),
         title="Блог",
-        menu=menu
+        menu=menu,
     )
+@app.route('/search', methods=['GET'])
+def search():
+    # form=SearchForm()
+    searched=request.args.get('search_field')
+    print(searched)
+    if searched:
+        posts=Post.query.filter(Post.body.contains(searched)).order_by(Post.title).all()
+    return render_template("search_result.html",searched=searched,posts=posts)
+
 
 
 # @app.route('/delete/<id>')

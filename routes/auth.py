@@ -20,7 +20,6 @@ auth = Blueprint('auth', __name__,
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     if request.method == "POST":
