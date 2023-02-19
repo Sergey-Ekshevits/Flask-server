@@ -112,14 +112,10 @@ def index():
     )
 @app.route('/search', methods=['GET'])
 def search():
-    # form=SearchForm()
     searched=request.args.get('search_field')
-    print(searched)
     if searched:
-        posts=Post.query.filter(Post.body.contains(searched)).order_by(Post.title).all()
+        posts=Post.query.filter(Post.body.contains(searched) | Post.title.contains(searched)).order_by(Post.title).all()
     return render_template("search_result.html",searched=searched,posts=posts)
-
-
 
 # @app.route('/delete/<id>')
 # def delete(id):
