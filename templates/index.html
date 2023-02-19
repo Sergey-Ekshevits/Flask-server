@@ -59,7 +59,7 @@
                     <div class="buttons">
 
                         <a href="{{ url_for('post.show_post', id=post.id) }}" class="btn btn-success">Go somewhere</a>
-                       {% if current_user.is_authenticated %}
+                       {% if current_user.is_authenticated and current_user.id==post.user.id %}
                         <a href="{{ url_for('post.delete_post', id=post.id) }}" class="btn btn-danger">Delete</a>
                         <a href="{{ url_for('post.change_post', id=post.id) }}" class="btn btn-warning">Modify</a>
                         {% endif %}

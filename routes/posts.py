@@ -32,8 +32,10 @@ def show_post(id):
     return render_template('post.html', post=post)
 @post.route('/delete/<id>')
 def delete_post(id):
-    Post.query.filter_by(id=id).delete()
-    db.session.commit()
+    post = Post.query.filter_by(id=id).first()
+    if post and current_user.id == post.user.id:
+        Post.query.filter_by(id=id).delete()
+        db.session.commit()
     return redirect(url_for('index'))
 
 @post.route('/change_post/<id>', methods=['GET','POST'])
@@ -41,50 +43,13 @@ def delete_post(id):
 def change_post(id):
     post = Post.query.filter_by(id=id).first()
     # print(post.title)
-    if request.method == "POST":
-        new_header = request.form.get('title')
+    if current_user.id == post.user.id and request.method == "POST":
+        new_title = request.form.get('title')
         new_body = request.form.get('body')
-        # id = request.form.get('id')
-        # print(id)
-        # post=Post.query.filter_by(id=id).first
         Post.query.filter_by(id=id).update({
-        Post.title: new_header,
-        Post.body:  new_body
+            Post.title: new_title,
+            Post.body:  new_body
         })
-
-        # Post.query.filter_by(id=id).update({
-        #     Post.title: new_header,
-        #     Post.body: new_body
-        # })
-        print(post.title)
-        print(post.body)
-        # print(post.id)
         db.session.commit()
-        # change_post_func(db, new_header, new_body, id)
-        # print (post)
-        # print (new_header,new_body)
-        # print (posts[0][0])
         return redirect(url_for('index'))
     return render_template('change_post.html',post=post)
-
-# def change_post_func(db, new_header, new_body, id):
-#     cursor = db.cursor()
-#     query = "UPDATE posts SET header = ?, body = ? WHERE id = ?"
-#     # Values to update
-#     values = (new_header, new_body, id)
-#     # Execute the update query
-#     cursor.execute(query, values)
-#     # Commit the changes
-#     db.commit()
-#     # db.close()
-
-# @app.route('/modify_post/<id>', methods=['GET'])
-# @login_required
-# def modify_post(id):
-#     db = get_db()
-#     post = get_post(db, id)
-#     # print(request.form)
-#     # new_header=request.form.get('header')
-#     # new_body=request.form.get('body')
-#     # change_post(new_header,new_body)
-#     return render_template('change_post.html', post=post, menu=menu)

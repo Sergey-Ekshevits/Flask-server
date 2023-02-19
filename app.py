@@ -92,14 +92,13 @@ menu = [
 ]
 @app.context_processor
 def base():
-    form=SearchForm()
-    return dict(form=form)
+    search_form=SearchForm()
+    return dict(search_form=search_form)
 @app.route('/')
 # @login_required
 def index():
     db = get_db()
     posts=Post.query.all()
-    # print(posts)
     page = request.args.get('page')
     # posts = getAllPosts(db, page)
     return render_template(
@@ -113,6 +112,7 @@ def index():
 @app.route('/search', methods=['GET'])
 def search():
     searched=request.args.get('search_field')
+    posts=[]
     if searched:
         posts=Post.query.filter(Post.body.contains(searched) | Post.title.contains(searched)).order_by(Post.title).all()
     return render_template("search_result.html",searched=searched,posts=posts)
@@ -146,21 +146,21 @@ def search():
 #     return redirect(url_for('index'))
 
 
-@app.route('/change_post', methods=['POST'])
-def change_post():
-    db = get_db()
-    # cursor = db.cursor()
-    # records=cursor.execute('SELECT * FROM posts')
-    # print(request.form)
-    # id = records.fetchall()[0][0]
-    new_header = request.form.get('header')
-    new_body = request.form.get('body')
-    id = request.form.get('id')
-    change_post_func(db, new_header, new_body, id)
-    # print (post)
-    # print (new_header,new_body)
-    # print (posts[0][0])
-    return redirect(url_for('index'))
+# @app.route('/change_post', methods=['POST'])
+# def change_post():
+#     db = get_db()
+#     # cursor = db.cursor()
+#     # records=cursor.execute('SELECT * FROM posts')
+#     # print(request.form)
+#     # id = records.fetchall()[0][0]
+#     new_header = request.form.get('header')
+#     new_body = request.form.get('body')
+#     id = request.form.get('id')
+#     change_post_func(db, new_header, new_body, id)
+#     # print (post)
+#     # print (new_header,new_body)
+#     # print (posts[0][0])
+#     return redirect(url_for('index'))
 
 
 # @app.route('/modify_post/<id>', methods=['GET'])
