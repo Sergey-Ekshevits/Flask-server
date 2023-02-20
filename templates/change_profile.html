@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        {{ super() }}
+        <title>Document</title>
+    {% endblock %}
+</head>
+<body>
+{% block content -%}
+    {{ super() }}
+    {{ current_user.id }}
+    {{ id }}
+    {% if current_user.id == id %}
+        You are in the right place
+    {% else %}
+        Access denied!
+    {% endif %}
+{% endblock %}
+</body>
+</html>

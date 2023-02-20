@@ -3,8 +3,10 @@ from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from db.User import User
+from db.Post import Post
 from db.db import db
 from forms import LoginForm, RegisterForm
+
 
 auth = Blueprint('auth', __name__,
                  template_folder='templates')
@@ -83,3 +85,11 @@ def register():
             print("Nok")
         return render_template('registration.html', form=form)
     return render_template('registration.html', form=form)
+@auth.route('/profile')
+def profile():
+    user_posts = db.session.query(Post).join(User).filter(Post.owner == current_user.id).all()
+    return render_template("profile.html",user_posts=user_posts,current_user=current_user)
+@auth.route('/change_profile/<int:id>')
+def change_profile(id):
+
+    return render_template("change_profile.html",current_user=current_user,id=id)
