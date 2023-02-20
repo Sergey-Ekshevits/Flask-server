@@ -123,6 +123,11 @@ def search():
         posts=Post.query.filter(Post.body.contains(searched) | Post.title.contains(searched)).order_by(Post.title).all()
     return render_template("search_result.html",searched=searched,posts=posts)
 
+@app.route('/profile')
+def profile():
+    user_posts = db.session.query(Post).join(User).filter(Post.owner == current_user.id).all()
+    return render_template("profile.html",user_posts=user_posts,current_user=current_user)
+
 # @app.route('/delete/<id>')
 # def delete(id):
 #     db = get_db()
