@@ -1,12 +1,13 @@
 import os
 from datetime import datetime
-
+from os.path import join, dirname, realpath
 from flask import Flask
 from flask import render_template, request, redirect, g, url_for
 from database import *
 from flask_login import LoginManager, current_user, login_required
 from forms import SearchForm
-
+from flask_migrate import Migrate
+from werkzeug.utils import secure_filename
 from db.Post import Post
 from db.db import db
 from db.User import User
@@ -32,9 +33,10 @@ app.secret_key = SECRET_KEY
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
-login_manager.login_message='Авторизуйтесь для доступа к странице'
-login_manager.login_message_category='success'
-
+login_manager.login_message = 'Авторизуйтесь для доступа к странице'
+login_manager.login_message_category = 'success'
+UPLOADS_PATH = join(dirname(realpath(__file__)), 'static\\img')
+migrate = Migrate(app, db)
 # db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
 # db.session.commit()
@@ -50,6 +52,44 @@ login_manager.login_message_category='success'
 #         db.cursor().executescript(f.read())
 #     db.commit()
 #     db.close()
+
+# def allowed_file(filename):
+#     return '.' in filename and \
+#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file:
+           
+            filename = secure_filename(file.filename)
+            file_ext = os.path.splitext(filename)[1]
+            print(file_ext)
+            print(3123123123123123123123123123123)
+            path= os.path.join(UPLOADS_PATH, "213123123" + file_ext)
+            file.save(path)
+            return redirect(url_for('uploaded_file',
+                                    filename=filename))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
+
 
 @login_manager.user_loader
 def load_user(id):
@@ -73,7 +113,7 @@ def page_not_found(error):
     return render_template('404.html', menu=menu, title='Страница не найдена')
 
 
-@app.errorhandler(504)
+@app.errorhandler(500)
 def page_not_found2(error):
     return render_template('404.html', menu=menu, title='Страница не найдена')
 
@@ -92,14 +132,18 @@ menu = [
         "link": "/authorization"
     }
 ]
+
+
 @app.context_processor
 def base():
-    search_form=SearchForm()
+    search_form = SearchForm()
     return dict(search_form=search_form)
+
+
 @app.route('/')
 # @login_required
 def index():
-    posts=Post.query.all()
+    posts = Post.query.all()
     # posts = db.session.query(Post).all()
     # posts2 = db.session.query(Post).join(User).filter(Post.owner == current_user.id).all()
     # test = db.session.query(User, Post).filter(Post.owner == current_user.id).all()
@@ -115,13 +159,16 @@ def index():
         title="Блог",
         menu=menu,
     )
+
+
 @app.route('/search', methods=['GET'])
 def search():
-    searched=request.args.get('search_field')
-    posts=[]
+    searched = request.args.get('search_field')
+    posts = []
     if searched:
-        posts=Post.query.filter(Post.body.contains(searched) | Post.title.contains(searched)).order_by(Post.title).all()
-    return render_template("search_result.html",searched=searched,posts=posts)
+        posts = Post.query.filter(Post.body.contains(
+            searched) | Post.title.contains(searched)).order_by(Post.title).all()
+    return render_template("search_result.html", searched=searched, posts=posts)
 
 # @app.route('/delete/<id>')
 # def delete(id):
@@ -182,8 +229,6 @@ def search():
 #     return render_template('change_post.html', post=post, menu=menu)
 
 
-
-
 @app.template_filter('formatdatetime')
 def format_datetime(value, format="%d %b %Y %I:%M %p"):
     """Format a date time to (Default): d Mon YYYY HH:MM P"""
@@ -192,3 +237,5 @@ def format_datetime(value, format="%d %b %Y %I:%M %p"):
     return datetime.fromtimestamp(int(value)).strftime(format)
 
 
+# flask db init
+# flask db migrate
