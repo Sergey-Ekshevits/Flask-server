@@ -6,7 +6,7 @@ from flask import render_template, request, redirect, g, url_for
 from database import *
 from flask_login import LoginManager, current_user, login_required
 from forms import SearchForm
-
+from flask_migrate import Migrate
 from db.Post import Post
 from db.db import db
 from db.User import User
@@ -34,7 +34,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
 login_manager.login_message='Авторизуйтесь для доступа к странице'
 login_manager.login_message_category='success'
-
+migrate = Migrate(app, db)
 # db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
 # db.session.commit()

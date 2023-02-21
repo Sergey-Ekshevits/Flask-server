@@ -1,14 +1,18 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
-
+from werkzeug.utils import secure_filename
 from db.User import User
 from db.Post import Post
 from db.db import db
 from forms import LoginForm, RegisterForm
+import os
+from os.path import join, dirname, realpath, splitext
+import uuid
 
 auth = Blueprint('auth', __name__,
                  template_folder='templates')
+UPLOADS_PATH = join(dirname(realpath(__file__)), '..\\static\\avatars')
 
 
 # @auth.route('/authorization', methods=['GET', 'POST'])
@@ -92,12 +96,17 @@ def profile():
     return render_template("profile.html", user_posts=user_posts, current_user=current_user)
 
 
-@auth.route('/change_profile/<int:id>',methods=['GET', 'POST'])
+@auth.route('/change_profile/<int:id>', methods=['GET', 'POST'])
 def change_profile(id):
-    form = RegisterForm()
-    new_name = User.query.get_or_404(id)
+    updated_user = User.query.get_or_404(id)
+    form = RegisterForm(name=current_user.name)
     if request.method == 'POST':
-        new_name.name = request.form.get("name")
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename != '':
+                filename = upload_file(file, updated_user)
+                updated_user.avatar_url = filename
+        updated_user.name = request.form.get("name")
         try:
             db.session.commit()
             # flash("Данные сохранились")
@@ -105,5 +114,22 @@ def change_profile(id):
         except:
             flash("Данные не сохранились")
 
-
     return render_template("change_profile.html", current_user=current_user, id=id, form=form)
+
+
+def upload_file(file, user):
+    if user.avatar_url:
+        delete_file(user.avatar_url)
+    file_ext = splitext(secure_filename(file.filename))[1]
+    filename = str(uuid.uuid4()) + file_ext
+    path = join(UPLOADS_PATH, filename)
+    file.save(path)
+    return filename
+    # return redirect(url_for('uploaded_file',
+    #                         filename=filename))
+
+
+def delete_file(filename):
+    path = join(UPLOADS_PATH, filename)
+    if os.path.isfile(path):
+        os.remove(path)
