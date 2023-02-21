@@ -21,8 +21,7 @@
                          style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                         <img src="{{ url_for('static', filename='default_profile.jpg') }}"
                              alt="avatar" class="img-fluid my-5" style="width: 80px;">
-                        <h5>Marie Horwitz</h5>
-                        <p>Web Designer</p>
+                        <a href="{{ url_for("auth.change_profile", id=current_user.id) }}" class="btn btn-primary">Редактировать</a>
                         <i class="far fa-edit mb-5"></i>
                     </div>
                     <div class="col-md-8">
