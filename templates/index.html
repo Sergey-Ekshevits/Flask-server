@@ -36,7 +36,7 @@
         <a href="{{ url_for("post.add_post") }}" class="btn btn-primary">Создать пост</a>
     {% endif %}
     <div class="d-flex flex-wrap justify-content-center">
-        {% for post in posts %}
+        {% for post in pagination %}
             <div class="card">
                 <!-- <img src="..." class="card-img-top" alt="..."> -->
                 <div class="card-body">
@@ -53,6 +53,7 @@
                     </div>
                 </div>
             </div>
+            {{ pagination.info }}
         {% endfor %}
     </div>
 {% endblock %}

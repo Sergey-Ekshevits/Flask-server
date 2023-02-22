@@ -8,6 +8,7 @@ from flask_login import LoginManager, current_user, login_required
 from forms import SearchForm
 from flask_migrate import Migrate
 from flask_ckeditor import CKEditor
+from flask_paginate import Pagination, get_page_parameter, get_page_args
 from db.Post import Post
 from db.db import db
 from db.User import User
@@ -37,6 +38,7 @@ login_manager.login_message='Авторизуйтесь для доступа к
 login_manager.login_message_category='success'
 migrate = Migrate(app, db)
 ckeditor = CKEditor(app)
+POSTS_PER_PAGE = 4
 # db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
 # db.session.commit()
@@ -98,10 +100,18 @@ menu = [
 def base():
     search_form=SearchForm()
     return dict(search_form=search_form)
-@app.route('/')
+@app.route('/', methods=['GET'])
+# @app.route('/<int:page>', methods = ['GET', 'POST'])
 # @login_required
-def index():
-    posts=Post.query.all()
+def index(page=1):
+    # pag={}
+    page = request.args.get('page', 1, type=int)
+    print(page)
+    # posts=Post.query.all()
+    # posts=Post.query.paginate(1,3)
+    pagination = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
+    # pag["pagin"] = Pagination(page=page, total=pagination)
+    print(pagination)
     # posts = db.session.query(Post).all()
     # posts2 = db.session.query(Post).join(User).filter(Post.owner == current_user.id).all()
     # test = db.session.query(User, Post).filter(Post.owner == current_user.id).all()
@@ -111,11 +121,12 @@ def index():
     # posts = getAllPosts(db, page)
     return render_template(
         'index.html',
-        posts=posts,
+        # posts=posts,
         current_user=current_user,
         # post_counter=post_counter(db),
         title="Блог",
         menu=menu,
+        pagination = pagination
     )
 @app.route('/search', methods=['GET'])
 def search():
