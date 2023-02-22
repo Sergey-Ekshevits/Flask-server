@@ -120,7 +120,8 @@ def index():
     # posts=Post.query.paginate(1,3)
     # pagination = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
     content['pagination'] = Pagination(page=page, total=total,
-                                       per_page=POSTS_PER_PAGE, bs_version=4)
+                                       per_page=POSTS_PER_PAGE, css_framework="bootstrap5", display_msg="посты <b>{start} - {end}</b> из \
+<b>{total}</b>" )
     # pag["pagin"] = Pagination(page=page, total=pagination)
     # print(pagination)
     # posts = db.session.query(Post).all()
