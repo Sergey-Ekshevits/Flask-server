@@ -116,7 +116,7 @@ def index():
     print(page)
     # posts = Post.query.all()
     total = len(Post.query.all())
-    paginated = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
+    paginated = Post.query.order_by(Post.date_created.desc()).paginate(page=page, per_page=POSTS_PER_PAGE)
     # posts=Post.query.paginate(1,3)
     # pagination = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
     content['pagination'] = Pagination(page=page, total=total,
