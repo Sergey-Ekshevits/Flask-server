@@ -23,7 +23,7 @@
             {{ form.hidden_tag() }}
             <p>{{ form.header.label() }} {{ form.header() }}</p>
             <p>{{ form.body.label() }} {{ form.body() }}</p>
-            <p>{{ form.submit() }}
+            <p>{{ form.submit(class="btn btn-success") }}
     </form>
     {{ ckeditor.load() }}
     {{ ckeditor.config(name="body") }}
@@ -37,8 +37,8 @@
     {#            <textarea class="form-control" name="body"  id="exampleFormControlTextarea1" rows="3">{{ post.body }}</textarea>#}
     {#        </div>#}
     {#        <button class="btn btn-success" type="submit">#}
-    Изменить
-    </button>
+{#    Изменить#}
+{#    </button>#}
 {% endblock %}
 </body>
 
