@@ -16,12 +16,12 @@
 <body>
     {% block content -%}
     {{ super() }}
-    {{ post }}
+{#    {{ post }}#}
     <a href="/">На главную</a>
     {% if post %}
         <p>{{ post.title }}</p>
         <p>{{ post.body|safe }}</p>
-        <p>{{ post.user.name }}</p>
+        <p>Автор: {{ post.user.name }}</p>
 
     {% endif %}
     {% endblock %}

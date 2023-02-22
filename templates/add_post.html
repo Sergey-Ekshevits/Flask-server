@@ -9,12 +9,12 @@
 </head>
 <body>
 {% block content -%}
-    {{ ckeditor.load() }}
+{#    {{ ckeditor.load() }}#}
     {{ super() }}
     {% if current_user.is_authenticated %}
         <form class="formo" action="{{ url_for("post.add_post") }}" method="post">
             {{ form.hidden_tag() }}
-            <p>{{ form.header.label() }} {{ form.header() }}</p>
+            <p>{{ form.title.label() }} {{ form.title() }}</p>
             <p>{{ form.body.label() }} {{ form.body() }}</p>
             <p>{{ form.submit() }}
         </form>

@@ -55,7 +55,7 @@ def delete_post(id):
 def change_post(id):
     form = PostField()
     post = Post.query.filter_by(id=id).first()
-    form.header.data = post.title
+    form.title.data = post.title
     form.body.data = post.body
     # print(post.title)
     if current_user.id == post.user.id and request.method == "POST":
