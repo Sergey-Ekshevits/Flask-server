@@ -10,27 +10,36 @@
 </head>
 
 <body>
-    {% block content %}
+{% block content %}
     {{ super() }}
+    {{ ckeditor.load() }}
     <a href="/">На главную</a>
     {% if post %}
-    {{ post }}
+        {{ post }}
     {% endif %}
-    <form class="formo" action="{{ url_for('post.change_post', id=post.id) }}" method="post" >
+    <form class="formo" action="{{ url_for('post.change_post', id=post.id) }}" method="post">
         <div class="mb-3">
-{#            <input  hidden name="id" value="{{ post.id }}" />#}
-            <label for="exampleFormControlInput1" class="form-label">Email address</label>
-            <input type="text" name="title" value="{{ post.title }}" class="form-control" id="exampleFormControlInput1"
-                placeholder="name@example.com">
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
-            <textarea class="form-control" name="body"  id="exampleFormControlTextarea1" rows="3">{{ post.body }}</textarea>
-        </div>
-        <button class="btn btn-success" type="submit">
-            Изменить
-        </button>
-        {% endblock %}
+            {#            <input  hidden name="id" value="{{ post.id }}" />#}
+            {{ form.hidden_tag() }}
+            <p>{{ form.header.label() }} {{ form.header() }}</p>
+            <p>{{ form.body.label() }} {{ form.body() }}</p>
+            <p>{{ form.submit() }}
+    </form>
+    {{ ckeditor.load() }}
+    {{ ckeditor.config(name="body") }}
+
+    {#            <label for="exampleFormControlInput1" class="form-label">Email address</label>#}
+    {#            <input type="text" name="title" value="{{ post.title }}" class="form-control" id="exampleFormControlInput1"#}
+    {#                placeholder="name@example.com">#}
+    {#        </div>#}
+    {#        <div class="mb-3">#}
+    {#            <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>#}
+    {#            <textarea class="form-control" name="body"  id="exampleFormControlTextarea1" rows="3">{{ post.body }}</textarea>#}
+    {#        </div>#}
+    {#        <button class="btn btn-success" type="submit">#}
+    Изменить
+    </button>
+{% endblock %}
 </body>
 
 </html>

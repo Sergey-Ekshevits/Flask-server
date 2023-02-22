@@ -20,7 +20,7 @@
     <a href="/">На главную</a>
     {% if post %}
         <p>{{ post.title }}</p>
-        <p>{{ post.body }}</p>
+        <p>{{ post.body|safe }}</p>
         <p>{{ post.user.name }}</p>
 
     {% endif %}

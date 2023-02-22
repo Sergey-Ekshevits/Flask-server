@@ -5,7 +5,8 @@ from werkzeug.utils import secure_filename
 from db.User import User
 from db.Post import Post
 from db.db import db
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, ChangeProfileForm
+
 import os
 from os.path import join, dirname, realpath, splitext
 import uuid
@@ -66,6 +67,7 @@ def logout():
     return redirect(url_for("auth.login"))
 
 
+
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -99,8 +101,9 @@ def profile():
 @auth.route('/change_profile/<int:id>', methods=['GET', 'POST'])
 def change_profile(id):
     updated_user = User.query.get_or_404(id)
-    form = RegisterForm(name=current_user.name)
-    if request.method == 'POST':
+    form = ChangeProfileForm(name=current_user.name)
+
+    if request.method == 'POST' and form.validate_on_submit:
         if 'file' in request.files:
             file = request.files['file']
             if file.filename != '':
@@ -113,7 +116,6 @@ def change_profile(id):
             return redirect(url_for("auth.profile"))
         except:
             flash("Данные не сохранились")
-
     return render_template("change_profile.html", current_user=current_user, id=id, form=form)
 
 

@@ -24,23 +24,7 @@
         {% else %}
             <h1>Нет</h1>
         {% endif %}
-        {% if current_user.is_authenticated %}
-            <form class="formo" action="{{ url_for("post.create_post") }}" method="post">
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Email address</label>
-                    <input type="text" name="header" class="form-control" id="exampleFormControlInput1"
 
-                           placeholder="name@example.com">
-                </div>
-                <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
-                    <textarea class="form-control" name="body" id="exampleFormControlTextarea1" rows="3"></textarea>
-                </div>
-                <button class="btn btn-success" type="submit">
-                    Отправить
-                </button>
-            </form>
-        {% endif %}
     </div>
 
     {% if posts %}
@@ -48,17 +32,19 @@
     {% else %}
         <h5 class="no_posts">У вас нет постов</h5>
     {% endif %}
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for("post.add_post") }}" class="btn btn-primary">Создать пост</a>
+    {% endif %}
     <div class="d-flex flex-wrap justify-content-center">
         {% for post in posts %}
             <div class="card">
                 <!-- <img src="..." class="card-img-top" alt="..."> -->
                 <div class="card-body">
                     <h5 class="card-title">Заголовок: {{ post.title }}</h5>
-                    <p class="card-text">{{ post.body }}</p>
+                    <p class="card-text">{{ post.body|safe }}</p>
                     <p class="card-text">Автор: {{ post.user.name }}</p>
                     <p class="card-text">Дата создания: {{ post.date_created|formatdatetime }}</p>
                     <div class="buttons">
-
                         <a href="{{ url_for('post.show_post', id=post.id) }}" class="btn btn-success">Go somewhere</a>
                        {% if current_user.is_authenticated and current_user.id==post.user.id %}
                         <a href="{{ url_for('post.delete_post', id=post.id) }}" class="btn btn-danger">Delete</a>

@@ -20,8 +20,10 @@
             <p>{{ form.hidden_tag() }}</p>
             <input type="file" name="file">
             <p>{{ form.name.label() }} {{ form.name() }}</p>
-            <p><input type="submit" name="btn" value="Изменить"></p>
+            <p>{{ form.submit() }}
+{#            <p><input type="submit" name="btn" value="Изменить"></p>#}
         </form>
+
     {% else %}
         Access denied!
     {% endif %}
