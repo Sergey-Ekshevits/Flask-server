@@ -103,13 +103,16 @@ def base():
 @app.route('/', methods=['GET'])
 # @app.route('/<int:page>', methods = ['GET', 'POST'])
 # @login_required
-def index(page=1):
+def index():
     # pag={}
+    content={}
     page = request.args.get('page', 1, type=int)
     print(page)
     # posts=Post.query.all()
     # posts=Post.query.paginate(1,3)
     pagination = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
+    content['pagination'] = Pagination(page=page, total=pagination,
+                                       per_page=POSTS_PER_PAGE, bs_version=4)
     # pag["pagin"] = Pagination(page=page, total=pagination)
     print(pagination)
     # posts = db.session.query(Post).all()
