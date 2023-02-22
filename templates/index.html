@@ -27,17 +27,18 @@
 
     </div>
 
-    {% if posts %}
-        <h5 class="posts_count">Количество постов: {{ posts|length }}</h5>
+    {% if total>0 %}
+        <h5 class="posts_count">Количество постов: {{ total }}</h5>
     {% else %}
-        <h5 class="no_posts">У вас нет постов</h5>
+        <h5 class="no_posts">Здесь нет постов</h5>
     {% endif %}
     {% if current_user.is_authenticated %}
         <a href="{{ url_for("post.add_post") }}" class="btn btn-primary">Создать пост</a>
     {% endif %}
+    {{ pagination.info }}
+    {{ pagination.links }}
     <div class="d-flex flex-wrap justify-content-center">
-                {{ pagination.info }}
-        {% for post in pagination %}
+        {% for post in paginated %}
             <div class="card">
                 <!-- <img src="..." class="card-img-top" alt="..."> -->
                 <div class="card-body">
@@ -47,9 +48,9 @@
                     <p class="card-text">Дата создания: {{ post.date_created|formatdatetime }}</p>
                     <div class="buttons">
                         <a href="{{ url_for('post.show_post', id=post.id) }}" class="btn btn-success">Go somewhere</a>
-                       {% if current_user.is_authenticated and current_user.id==post.user.id %}
-                        <a href="{{ url_for('post.delete_post', id=post.id) }}" class="btn btn-danger">Delete</a>
-                        <a href="{{ url_for('post.change_post', id=post.id) }}" class="btn btn-warning">Modify</a>
+                        {% if current_user.is_authenticated and current_user.id==post.user.id %}
+                            <a href="{{ url_for('post.delete_post', id=post.id) }}" class="btn btn-danger">Delete</a>
+                            <a href="{{ url_for('post.change_post', id=post.id) }}" class="btn btn-warning">Modify</a>
                         {% endif %}
                     </div>
 

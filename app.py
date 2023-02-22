@@ -34,11 +34,13 @@ app.secret_key = SECRET_KEY
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
-login_manager.login_message='Авторизуйтесь для доступа к странице'
-login_manager.login_message_category='success'
+login_manager.login_message = 'Авторизуйтесь для доступа к странице'
+login_manager.login_message_category = 'success'
 migrate = Migrate(app, db)
 ckeditor = CKEditor(app)
 POSTS_PER_PAGE = 4
+
+
 # db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
 # db.session.commit()
@@ -96,25 +98,31 @@ menu = [
         "link": "/authorization"
     }
 ]
+
+
 @app.context_processor
 def base():
-    search_form=SearchForm()
+    search_form = SearchForm()
     return dict(search_form=search_form)
+
+
 @app.route('/', methods=['GET'])
 # @app.route('/<int:page>', methods = ['GET', 'POST'])
 # @login_required
 def index():
     # pag={}
-    content={}
+    content = {}
     page = request.args.get('page', 1, type=int)
     print(page)
-    # posts=Post.query.all()
+    # posts = Post.query.all()
+    total = len(Post.query.all())
+    paginated = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
     # posts=Post.query.paginate(1,3)
-    pagination = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
-    content['pagination'] = Pagination(page=page, total=11,
+    # pagination = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
+    content['pagination'] = Pagination(page=page, total=total,
                                        per_page=POSTS_PER_PAGE, bs_version=4)
     # pag["pagin"] = Pagination(page=page, total=pagination)
-    print(pagination)
+    # print(pagination)
     # posts = db.session.query(Post).all()
     # posts2 = db.session.query(Post).join(User).filter(Post.owner == current_user.id).all()
     # test = db.session.query(User, Post).filter(Post.owner == current_user.id).all()
@@ -129,15 +137,20 @@ def index():
         # post_counter=post_counter(db),
         title="Блог",
         menu=menu,
-        pagination = pagination
+        total=total,
+        pagination=content['pagination'],
+        paginated=paginated
     )
+
+
 @app.route('/search', methods=['GET'])
 def search():
-    searched=request.args.get('search_field')
-    posts=[]
+    searched = request.args.get('search_field')
+    posts = []
     if searched:
-        posts=Post.query.filter(Post.body.contains(searched) | Post.title.contains(searched)).order_by(Post.title).all()
-    return render_template("search_result.html",searched=searched,posts=posts)
+        posts = Post.query.filter(Post.body.contains(searched) | Post.title.contains(searched)).order_by(
+            Post.title).all()
+    return render_template("search_result.html", searched=searched, posts=posts)
 
 
 # @app.route('/delete/<id>')
@@ -199,13 +212,9 @@ def search():
 #     return render_template('change_post.html', post=post, menu=menu)
 
 
-
-
 @app.template_filter('formatdatetime')
 def format_datetime(value, format="%d %b %Y %I:%M %p"):
     """Format a date time to (Default): d Mon YYYY HH:MM P"""
     if value is None:
         return ""
     return datetime.fromtimestamp(int(value)).strftime(format)
-
-
