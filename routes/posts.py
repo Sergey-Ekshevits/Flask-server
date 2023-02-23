@@ -28,8 +28,11 @@ post = Blueprint('post', __name__,
 def add_post():
     form = PostField()
     if request.method == "POST":
-        header = request.form.get('header')
+        header = request.form.get('title')
         body = request.form.get('body')
+        if len(body) <= 20:
+            flash("Текст поста должен быть больше...")
+            return render_template('add_post.html', form=form)
         current_GMT = time.gmtime()
         time_stamp = calendar.timegm(current_GMT)
         post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp)

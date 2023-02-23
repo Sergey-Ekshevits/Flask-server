@@ -23,5 +23,5 @@ class ChangeProfileForm(RegisterForm):
 
 class PostField(FlaskForm):
     title = StringField("Post title", validators=[DataRequired(),Length(min=4,max=99)])
-    body = CKEditorField("Body", validators=[DataRequired(), Length(min=4,max=1199)])
+    body = CKEditorField("Body", validators=[DataRequired(), Length(min=20,max=1199)])
     submit = SubmitField("Отправить")

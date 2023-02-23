@@ -12,21 +12,24 @@
 <body>
 {% block content %}
     {{ super() }}
-{#    {{ ckeditor.load() }}#}
-{#    <a href="/">На главную</a>#}
-{#    {% if post %}#}
-{#        {{ post }}#}
-{#    {% endif %}#}
+    {#    {{ ckeditor.load() }}#}
+    {#    <a href="/">На главную</a>#}
+    {#    {% if post %}#}
+    {#        {{ post }}#}
+    {#    {% endif %}#}
+
     <form class="formo" action="{{ url_for('post.change_post', id=post.id) }}" method="post">
         <div class="mb-3">
             {#            <input  hidden name="id" value="{{ post.id }}" />#}
             {{ form.hidden_tag() }}
             <p>{{ form.title.label() }} {{ form.title() }}</p>
             <p>{{ form.body.label() }} {{ form.body() }}</p>
-            <p>{{ form.submit(class="btn btn-success") }}
+            <p>{{ form.submit(class="btn btn-success") }}</p>
+            {{ ckeditor.load() }}
+            {{ ckeditor.config(name="body") }}
+        </div>
     </form>
-    {{ ckeditor.load() }}
-    {{ ckeditor.config(name="body") }}
+
 
     {#            <label for="exampleFormControlInput1" class="form-label">Email address</label>#}
     {#            <input type="text" name="title" value="{{ post.title }}" class="form-control" id="exampleFormControlInput1"#}
@@ -37,8 +40,8 @@
     {#            <textarea class="form-control" name="body"  id="exampleFormControlTextarea1" rows="3">{{ post.body }}</textarea>#}
     {#        </div>#}
     {#        <button class="btn btn-success" type="submit">#}
-{#    Изменить#}
-{#    </button>#}
+    {#    Изменить#}
+    {#    </button>#}
 {% endblock %}
 </body>
 

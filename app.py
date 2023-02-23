@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-
+from flask import json
 from flask import Flask
 from flask import render_template, request, redirect, g, url_for
 from database import *
@@ -113,15 +113,21 @@ def index():
     # pag={}
     content = {}
     page = request.args.get('page', 1, type=int)
+    myposts = request.args.get('myposts', False, type=bool)
     print(page)
     # posts = Post.query.all()
-    total = len(Post.query.all())
-    paginated = Post.query.order_by(Post.date_created.desc()).paginate(page=page, per_page=POSTS_PER_PAGE)
+    if myposts:
+        total = len(Post.query.filter(Post.owner == current_user.id).all())
+        paginated = Post.query.filter(Post.owner == current_user.id).order_by(Post.date_created.desc()).paginate(
+            page=page, per_page=POSTS_PER_PAGE)
+    else:
+        total = len(Post.query.all())
+        paginated = Post.query.order_by(Post.date_created.desc()).paginate(page=page, per_page=POSTS_PER_PAGE)
     # posts=Post.query.paginate(1,3)
     # pagination = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
     content['pagination'] = Pagination(page=page, total=total,
                                        per_page=POSTS_PER_PAGE, css_framework="bootstrap5", display_msg="посты <b>{start} - {end}</b> из \
-<b>{total}</b>" )
+<b>{total}</b>")
     # pag["pagin"] = Pagination(page=page, total=pagination)
     # print(pagination)
     # posts = db.session.query(Post).all()
@@ -200,17 +206,22 @@ def search():
 #     return redirect(url_for('index'))
 
 
-# @app.route('/modify_post/<id>', methods=['GET'])
-# @login_required
-# def modify_post(id):
-#     # db = get_db()
-#     # post = get_post(db, id)
-#     # print(request.form)
-#     # new_header=request.form.get('header')
-#     # new_body=request.form.get('body')
-#     # change_post(new_header,new_body)
-#
-#     return render_template('change_post.html', post=post, menu=menu)
+@app.route('/modify', methods=['POST'])
+def modify():
+    posts= []
+    pos = Post.query.all()
+    for ios in pos:
+        bor = {}
+        bor["toi"] = ios.title
+        bor["vvv"] = ios.body
+        posts.append(bor)
+    print(posts)
+    response = app.response_class(
+        response=json.dumps(posts),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 @app.template_filter('formatdatetime')
@@ -219,13 +230,23 @@ def format_datetime(value, format="%d %b %Y %I:%M %p"):
     if value is None:
         return ""
     return datetime.fromtimestamp(int(value)).strftime(format)
+
+
 @app.template_filter('timedif')
 def time_difference(value, format="%d %b %Y %I:%M %p"):
     now = datetime.now()
     # timedif=now-datetime.fromtimestamp(int(value))
     # timedif_hours = timedif.hours()
-    delta = now-datetime.fromtimestamp(int(value))
-    if delta.total_seconds()/1800<1:
+    delta = now - datetime.fromtimestamp(int(value))
+    if delta.total_seconds() / 1800 < 1:
         return "less than 30 min ago"
     else:
         return datetime.fromtimestamp(int(value)).strftime(format)
+
+
+@app.template_filter('deletescript')
+def deletescript(value):
+    """Format a date time to (Default): d Mon YYYY HH:MM P"""
+    if value is None:
+        return ""
+    return value.replace("script", "p")
