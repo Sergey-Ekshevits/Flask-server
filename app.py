@@ -208,16 +208,14 @@ def search():
 
 @app.route('/modify', methods=['POST'])
 def modify():
-    posts= []
-    pos = Post.query.all()
-    for ios in pos:
-        bor = {}
-        bor["toi"] = ios.title
-        bor["vvv"] = ios.body
-        posts.append(bor)
-    print(posts)
+    posts_to_json = []
+    posts = Post.query.all()
+    for one_post in posts:
+        post_dict = {"title": one_post.title, "body": one_post.body}
+        posts_to_json.append(post_dict)
+    print(posts_to_json)
     response = app.response_class(
-        response=json.dumps(posts),
+        response=json.dumps(posts_to_json),
         status=200,
         mimetype='application/json'
     )
