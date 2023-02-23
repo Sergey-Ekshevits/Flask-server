@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import Flask
 from flask import render_template, request, redirect, g, url_for
@@ -219,3 +219,13 @@ def format_datetime(value, format="%d %b %Y %I:%M %p"):
     if value is None:
         return ""
     return datetime.fromtimestamp(int(value)).strftime(format)
+@app.template_filter('timedif')
+def time_difference(value, format="%d %b %Y %I:%M %p"):
+    now = datetime.now()
+    # timedif=now-datetime.fromtimestamp(int(value))
+    # timedif_hours = timedif.hours()
+    delta = now-datetime.fromtimestamp(int(value))
+    if delta.total_seconds()/1800<1:
+        return "less than 30 min ago"
+    else:
+        return datetime.fromtimestamp(int(value)).strftime(format)

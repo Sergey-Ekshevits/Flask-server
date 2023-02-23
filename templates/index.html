@@ -46,6 +46,9 @@
                     <p class="card-text">{{ post.body|safe }}</p>
                     <p class="card-text">Автор: {{ post.user.name }}</p>
                     <p class="card-text">Дата создания: {{ post.date_created|formatdatetime }}</p>
+                    {% if post.date_modified %}
+                        <p class="card-text">Изменено: {{ post.date_modified|timedif }}</p>
+                    {% endif %}
                     <div class="buttons">
                         <a href="{{ url_for('post.show_post', id=post.id) }}" class="btn btn-success">Go somewhere</a>
                         {% if current_user.is_authenticated and current_user.id==post.user.id %}

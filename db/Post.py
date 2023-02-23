@@ -9,6 +9,7 @@ class Post(db.Model):
     body = Column(String, nullable=False)
     owner = Column(String, ForeignKey('users.id'))
     date_created = Column(String, nullable=False)
+    date_modified = Column(String)
     user = db.relationship('User', backref='user_posts')
 
 

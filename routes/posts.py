@@ -57,15 +57,17 @@ def change_post(id):
     post = Post.query.filter_by(id=id).first()
     form.title.data = post.title
     form.body.data = post.body
+    current_GMT = time.gmtime()
+    time_stamp = calendar.timegm(current_GMT)
     # print(post.title)
     if current_user.id == post.user.id and request.method == "POST":
         new_title = request.form.get('title')
         new_body = request.form.get('body')
         Post.query.filter_by(id=id).update({
             Post.title: new_title,
-            Post.body:  new_body
+            Post.body:  new_body,
+            Post.date_modified: time_stamp
         })
         db.session.commit()
-
         return redirect(url_for('index'))
     return render_template('change_post.html',post=post, form=form)
