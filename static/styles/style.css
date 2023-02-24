@@ -25,6 +25,11 @@ ul {
     font-size: 150%;
 }
 
+.page-item.active .page-link {
+    background: red;
+    border: solid 1px red;
+}
+
 .buttons {
     display: flex;
     justify-content: space-between;

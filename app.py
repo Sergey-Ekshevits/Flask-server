@@ -14,6 +14,8 @@ from db.db import db
 from db.User import User
 from routes.auth import auth
 from routes.posts import post
+import bot
+import threading
 
 DATABASE = 'blogdb.db'
 DATABASE2 = 'blogdb2.db'
@@ -40,6 +42,18 @@ migrate = Migrate(app, db)
 ckeditor = CKEditor(app)
 POSTS_PER_PAGE = 4
 
+
+class FlaskThread(threading.Thread):
+    def run(self) -> None:
+        app.run()
+
+
+class TelegramThread(threading.Thread):
+    def run(self) -> None:
+        bot.run_bot()
+
+
+#
 
 # db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
@@ -248,3 +262,8 @@ def deletescript(value):
     if value is None:
         return ""
     return value.replace("script", "p")
+
+flask_thread = FlaskThread()
+# bot_run = TelegramThread()
+flask_thread.start()
+# bot_run.start()
