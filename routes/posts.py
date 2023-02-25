@@ -1,5 +1,6 @@
 import calendar
 import time
+from db.UserTelegram import UserTelegram
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
@@ -7,7 +8,7 @@ from sqlalchemy import select, update, delete, values
 from forms import PostField
 from db.Post import Post
 from db.db import db
-
+from bot import bot
 post = Blueprint('post', __name__,
                  template_folder='templates')
 
@@ -35,6 +36,11 @@ def add_post():
             return render_template('add_post.html', form=form)
         current_GMT = time.gmtime()
         time_stamp = calendar.timegm(current_GMT)
+        allTgUsers = UserTelegram.query.all()
+        for tgUser in allTgUsers:
+            print(tgUser)
+            bot.send_message(tgUser.user_id, "Новый пост создал " + current_user.name + ". Заголовок поста - " + header , 
+                         parse_mode='Markdown')
         post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp)
         db.session.add(post)
         db.session.commit()

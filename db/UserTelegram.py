@@ -5,12 +5,12 @@ class UserTelegram(db.Model):
     __tablename__ = "user_telegram"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, nullable=False)
     user_id = Column(Integer, unique=True)
     avatar_url = Column(String)
     def __repr__(self):
-        return "<User(name='%s', email='%s', password='%s')>" % (
+        return "<UserTelegram(name='%s', user_id='%s', avatar_url='%s')>" % (
             self.name,
-            self.email,
-            self.password,
+            self.user_id,
+            self.avatar_url,
         )

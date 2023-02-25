@@ -34,7 +34,8 @@ app.config.update(dict(DATABASE=os.path.join(app.root_path, DATABASE)))
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(app.root_path, DATABASE2)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.app_context().push()
+app_ctx= app.app_context()
+app_ctx.push()
 db.init_app(app)
 app.secret_key = SECRET_KEY
 
@@ -54,12 +55,12 @@ class FlaskThread(threading.Thread):
 
 class TelegramThread(threading.Thread):
     def run(self) -> None:
-        bot.run_bot()
+        bot.run_bot(app_ctx)
 
 
 #
 
-# db.create_all()
+db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
 # db.session.commit()
 

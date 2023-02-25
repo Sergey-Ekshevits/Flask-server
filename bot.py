@@ -1,17 +1,17 @@
 import telebot
 from telebot import types
-
-from routes.bot import add_user_telegram
+from db.UserTelegram import UserTelegram
+from db.db import db
 
 bot = telebot.TeleBot('5938142207:AAHiqSwhB-997sVsvWJ-mLSRfcbNnG71GlM', threaded=False)
 
 bot.remove_webhook()
-
+app_context = None
 
 @bot.message_handler(commands=['start'])
 def start(message):
     print(message.from_user.id)
-    # add_user_telegram(message)
+    add_user_telegram(message)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("👋 Поздороваться")
     markup.add(btn1)
@@ -47,5 +47,17 @@ def get_text_messages(message):
                          parse_mode='Markdown')
 
 
-def run_bot():
+def run_bot(app_ctx):
+    global app_context
+    app_context = app_ctx
     bot.polling(none_stop=True, interval=0)  # обязательная для работы бота часть
+
+
+def add_user_telegram(message):
+    with app_context:
+        user_telegram = UserTelegram.query.filter_by(user_id=message.from_user.id).first()
+        if not user_telegram:
+            new_user_telegram = UserTelegram(user_id=message.from_user.id,
+                                            name=message.from_user.first_name + " " + message.from_user.last_name)
+            db.session.add(new_user_telegram)
+            db.session.commit()
