@@ -1,6 +1,6 @@
 import calendar
 import time
-
+from bot import bot
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from sqlalchemy import select, update, delete, values
@@ -30,6 +30,7 @@ def add_post():
     if request.method == "POST":
         header = request.form.get('title')
         body = request.form.get('body')
+        bot.send_message("", "Создали пост - " + header)  # ответ бота
         if len(body) <= 20:
             flash("Текст поста должен быть больше...")
             return render_template('add_post.html', form=form)

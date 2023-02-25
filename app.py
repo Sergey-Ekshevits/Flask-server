@@ -43,10 +43,9 @@ ckeditor = CKEditor(app)
 POSTS_PER_PAGE = 4
 
 
-class FlaskThread(threading.Thread):
-    def run(self) -> None:
-        app.run()
-
+# class FlaskThread(threading.Thread):
+#     def run(self) -> None:
+#         app.run(debug=True)
 
 class TelegramThread(threading.Thread):
     def run(self) -> None:
@@ -62,7 +61,7 @@ class TelegramThread(threading.Thread):
 # def connect_db():
 #     conn=sqlite3.connect(app.config['DATABASE'])
 #     conn.row_factory = sqlite3.Row
-#     return conn
+#     return conn 
 
 # def create_db():
 #     db = connect_db(app)
@@ -91,7 +90,6 @@ def close_db(error):
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html', menu=menu, title='Страница не найдена')
-
 
 @app.errorhandler(504)
 def page_not_found2(error):
@@ -263,7 +261,10 @@ def deletescript(value):
         return ""
     return value.replace("script", "p")
 
-flask_thread = FlaskThread()
-# bot_run = TelegramThread()
-flask_thread.start()
-# bot_run.start()
+
+if __name__ == '__main__':
+  bot_run = TelegramThread(daemon=True)
+  
+  bot_run.start()
+  app.run(debug=True)
+  
