@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from flask import json
 from flask import Flask
 from flask import render_template, request, redirect, g, url_for
+from telebot import types
+
 from database import *
 from flask_login import LoginManager, current_user, login_required
 from forms import SearchForm
@@ -16,6 +18,9 @@ from routes.auth import auth
 from routes.posts import post
 import bot
 import threading
+
+# from threading import Thread
+
 
 DATABASE = 'blogdb.db'
 DATABASE2 = 'blogdb2.db'
@@ -41,7 +46,6 @@ login_manager.login_message_category = 'success'
 migrate = Migrate(app, db)
 ckeditor = CKEditor(app)
 POSTS_PER_PAGE = 4
-
 
 class FlaskThread(threading.Thread):
     def run(self) -> None:
@@ -220,20 +224,20 @@ def search():
 #     return redirect(url_for('index'))
 
 
-@app.route('/modify', methods=['POST'])
-def modify():
-    posts_to_json = []
-    posts = Post.query.all()
-    for one_post in posts:
-        post_dict = {"title": one_post.title, "body": one_post.body}
-        posts_to_json.append(post_dict)
-    print(posts_to_json)
-    response = app.response_class(
-        response=json.dumps(posts_to_json),
-        status=200,
-        mimetype='application/json'
-    )
-    return response
+# @app.route('/modify', methods=['POST'])
+# def modify():
+#     posts_to_json = []
+#     posts = Post.query.all()
+#     for one_post in posts:
+#         post_dict = {"title": one_post.title, "body": one_post.body}
+#         posts_to_json.append(post_dict)
+#     print(posts_to_json)
+#     response = app.response_class(
+#         response=json.dumps(posts_to_json),
+#         status=200,
+#         mimetype='application/json'
+#     )
+#     return response
 
 
 @app.template_filter('formatdatetime')
@@ -258,12 +262,15 @@ def time_difference(value, format="%d %b %Y %I:%M %p"):
 
 @app.template_filter('deletescript')
 def deletescript(value):
-    """Format a date time to (Default): d Mon YYYY HH:MM P"""
     if value is None:
         return ""
     return value.replace("script", "p")
 
-flask_thread = FlaskThread()
-# bot_run = TelegramThread()
-flask_thread.start()
-# bot_run.start()
+
+if __name__ == '__main__':
+    # flask_thread = FlaskThread()
+    # flask_thread.start()
+    bot_run = TelegramThread(daemon=True)
+    bot_run.start()
+    app.run(debug=True)
+

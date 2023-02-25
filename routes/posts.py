@@ -38,6 +38,8 @@ def add_post():
         post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp)
         db.session.add(post)
         db.session.commit()
+
+        # sendMessage()
         return redirect(url_for("index"))
     return render_template('add_post.html', form=form)
 
@@ -52,6 +54,7 @@ def delete_post(id):
         Post.query.filter_by(id=id).delete()
         db.session.commit()
     return redirect(url_for('index'))
+
 
 @post.route('/change_post/<id>', methods=['GET','POST'])
 @login_required
@@ -68,7 +71,7 @@ def change_post(id):
         new_body = request.form.get('body')
         Post.query.filter_by(id=id).update({
             Post.title: new_title,
-            Post.body:  new_body,
+            Post.body: new_body,
             Post.date_modified: time_stamp
         })
         db.session.commit()
