@@ -28,6 +28,9 @@
                 <p>{{ comment.content|deletescript }}</p>
                 <p>{{ comment.date_created|formatdatetime }}</p>
                 <p>Комментировал: {{ comment.comment_owner.name }}</p>
+                {% if current_user.id == comment.comment_owner.id %}
+                    <a href="{{ url_for("post.delete_comment",id=comment.id) }}" class="btn btn-primary">Удалить комментарий</a>
+                {% endif %}
             {% endfor %}
         {% endif %}
         <form class="card" action="{{ url_for("post.show_post", id=post.id) }}" method="post">

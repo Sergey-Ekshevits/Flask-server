@@ -64,6 +64,23 @@ def show_post(id):
         return redirect(url_for('post.show_post',id=post.id))
     # print(comments)
     return render_template('post.html', post=post, comments=comments,form=form)
+
+@post.route('/delete_comment/<id>')
+def delete_comment(id):
+    comment = Comments.query.filter_by(id=id).first()
+    post_id=comment.commented_post
+    # print(int(comment.commentator) == current_user.id)
+    if int(comment.commentator) == current_user.id:
+        print(comment.commentator, current_user.id, id)
+        Comments.query.filter_by(id=id).delete()
+        db.session.commit()
+    else:
+        print("Failed")
+    # post = db.session.query(Comments).get(comment.first().id)
+    # print(comment.commented_post)
+
+    # print(comment.commentator , current_user.id, id)
+    return redirect(url_for('post.show_post', id=post_id))
 @post.route('/delete/<id>')
 def delete_post(id):
     post = Post.query.filter_by(id=id).first()
