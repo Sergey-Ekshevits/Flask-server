@@ -11,7 +11,7 @@ class User(UserMixin, db.Model):
     password = Column(String)
     avatar_url = Column(String)
     posts = db.relationship('Post')
-    user_comments = db.relationship('Comments', backref='commentator')
+    user_comments = db.relationship('Comments', backref='comment_owner')
     def __repr__(self):
         return "<User(name='%s', email='%s', password='%s')>" % (
             self.name,

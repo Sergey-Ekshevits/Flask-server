@@ -14,6 +14,7 @@ from flask_paginate import Pagination, get_page_parameter, get_page_args
 from db.Post import Post
 from db.db import db
 from db.User import User
+from db.Comments import Comments
 from routes.auth import auth
 from routes.posts import post
 import bot
@@ -60,7 +61,7 @@ class TelegramThread(threading.Thread):
 
 #
 
-db.create_all()
+# db.create_all()
 # db.session.add(User(name='john', email='jd@example.com', password='Biology student'))
 # db.session.commit()
 

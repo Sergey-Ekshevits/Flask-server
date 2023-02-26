@@ -5,8 +5,9 @@ from db.UserTelegram import UserTelegram
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from sqlalchemy import select, update, delete, values
-from forms import PostField
+from forms import PostField, CommentField
 from db.Post import Post
+from db.Comments import Comments
 from db.db import db
 from bot import bot
 post = Blueprint('post', __name__,
@@ -49,10 +50,20 @@ def add_post():
         return redirect(url_for("index"))
     return render_template('add_post.html', form=form)
 
-@post.route('/post/<id>')
+@post.route('/post/<id>',methods=['GET', 'POST'])
 def show_post(id):
+    form = CommentField()
     post = Post.query.filter_by(id=id).first()
-    return render_template('post.html', post=post)
+    current_GMT = time.gmtime()
+    time_stamp = calendar.timegm(current_GMT)
+    comments = db.session.query(Comments).join(Post).filter(Comments.commented_post == post.id).all()
+    if request.method=='POST' and form.validate_on_submit():
+        comment=Comments(content = request.form.get('content'), commentator=current_user.id, date_created = time_stamp, commented_post = post.id)
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('post.show_post',id=post.id))
+    # print(comments)
+    return render_template('post.html', post=post, comments=comments,form=form)
 @post.route('/delete/<id>')
 def delete_post(id):
     post = Post.query.filter_by(id=id).first()
