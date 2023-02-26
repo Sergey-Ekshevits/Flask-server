@@ -11,7 +11,7 @@ class Post(db.Model):
     date_created = Column(String, nullable=False)
     date_modified = Column(String)
     user = db.relationship('User', backref='user_posts')
-
+    comments = db.relationship('Comments', backref='comments')
 
     # def __repr__(self):
     #     return "<User(name='%s', email='%s', password='%s')>" % (
