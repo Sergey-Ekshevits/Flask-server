@@ -272,6 +272,6 @@ if __name__ == '__main__':
     # flask_thread = FlaskThread()
     # flask_thread.start()
     bot_run = TelegramThread(daemon=True)
-    bot_run.start()
+    # bot_run.start()
     app.run(debug=True)
 
