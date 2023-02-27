@@ -56,7 +56,7 @@ def show_post(id):
     post = Post.query.filter_by(id=id).first()
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
-    comments = db.session.query(Comments).join(Post).filter(Comments.commented_post == post.id).all()
+    comments = post.comments
     if request.method=='POST' and form.validate_on_submit():
         comment=Comments(content = request.form.get('content'), commentator=current_user.id, date_created = time_stamp, commented_post = post.id)
         db.session.add(comment)
