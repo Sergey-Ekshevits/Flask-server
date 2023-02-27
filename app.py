@@ -4,7 +4,7 @@ from flask import json
 from flask import Flask
 from flask import render_template, request, redirect, g, url_for
 from telebot import types
-
+from werkzeug.utils import secure_filename
 from database import *
 from flask_login import LoginManager, current_user, login_required
 from forms import SearchForm
@@ -19,7 +19,9 @@ from routes.auth import auth
 from routes.posts import post
 import bot
 import threading
-
+import os
+from os.path import join, dirname, realpath, splitext
+import uuid
 
 
 DATABASE = 'blogdb.db'

@@ -6,14 +6,14 @@ from db.User import User
 from db.Post import Post
 from db.db import db
 from forms import LoginForm, RegisterForm, ChangeProfileForm
-
-import os
-from os.path import join, dirname, realpath, splitext
-import uuid
+from functions import upload_avatar
+# import os
+# from os.path import join, dirname, realpath, splitext
+# import uuid
 
 auth = Blueprint('auth', __name__,
                  template_folder='templates')
-UPLOADS_PATH = join(dirname(realpath(__file__)), '..\\static\\avatars')
+# UPLOADS_PATH = join(dirname(realpath(__file__)), '..\\static\\avatars')
 
 
 # @auth.route('/authorization', methods=['GET', 'POST'])
@@ -102,12 +102,12 @@ def profile():
 def change_profile(id):
     updated_user = User.query.get_or_404(id)
     form = ChangeProfileForm(name=current_user.name)
-
     if request.method == 'POST' and form.validate_on_submit:
         if 'file' in request.files:
             file = request.files['file']
+            print(file)
             if file.filename != '':
-                filename = upload_file(file, updated_user)
+                filename = upload_avatar(file, updated_user)
                 updated_user.avatar_url = filename
         updated_user.name = request.form.get("name")
         try:
@@ -118,20 +118,20 @@ def change_profile(id):
             flash("Данные не сохранились")
     return render_template("change_profile.html", current_user=current_user, id=id, form=form)
 
-
-def upload_file(file, user):
-    if user.avatar_url:
-        delete_file(user.avatar_url)
-    file_ext = splitext(secure_filename(file.filename))[1]
-    filename = str(uuid.uuid4()) + file_ext
-    path = join(UPLOADS_PATH, filename)
-    file.save(path)
-    return filename
-    # return redirect(url_for('uploaded_file',
-    #                         filename=filename))
-
-
-def delete_file(filename):
-    path = join(UPLOADS_PATH, filename)
-    if os.path.isfile(path):
-        os.remove(path)
+#
+# def upload_file(file, user):
+#     if user.avatar_url:
+#         delete_file(user.avatar_url)
+#     file_ext = splitext(secure_filename(file.filename))[1]
+#     filename = str(uuid.uuid4()) + file_ext
+#     path = join(UPLOADS_PATH, filename)
+#     file.save(path)
+#     return filename
+#     # return redirect(url_for('uploaded_file',
+#     #                         filename=filename))
+#
+#
+# def delete_file(filename):
+#     path = join(UPLOADS_PATH, filename)
+#     if os.path.isfile(path):
+#         os.remove(path)
