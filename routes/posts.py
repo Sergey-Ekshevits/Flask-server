@@ -33,7 +33,7 @@ def add_post():
     if request.method == "POST" and form.validate_on_submit:
         header = request.form.get('title')
         body = request.form.get('body')
-        post_pic = upload_post_pic(request.files['post_pic'])
+        post_pic = upload_post_pic(request.files['post_pic'],folder='post-picture')
         # upload_post_pic(request.files['post_pic'])
         # print(post_pic)
         # print(upload_post_pic(post_pic))
