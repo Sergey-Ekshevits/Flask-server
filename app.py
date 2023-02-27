@@ -20,7 +20,6 @@ from routes.posts import post
 import bot
 import threading
 
-# from threading import Thread
 
 
 DATABASE = 'blogdb.db'

@@ -2,8 +2,12 @@ import telebot
 from telebot import types
 from db.UserTelegram import UserTelegram
 from db.db import db
+from dotenv import load_dotenv
+import os
 
-bot = telebot.TeleBot('5938142207:AAHiqSwhB-997sVsvWJ-mLSRfcbNnG71GlM', threaded=False)
+load_dotenv()
+
+bot = telebot.TeleBot(os.getenv('TELEGRAM_TOKEN'), threaded=False)
 
 bot.remove_webhook()
 app_context = None
