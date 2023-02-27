@@ -15,8 +15,9 @@
         {% for msg in get_flashed_messages() %}
             <div class="flash">{{ msg }}</div>
         {% endfor %}
-        <form class="formo" action="{{ url_for("post.add_post") }}" method="post">
-            {{ form.hidden_tag() }}
+        <form action="{{ url_for("post.add_post") }}" method="post" enctype=multipart/form-data class="form-contact">
+            <p>{{ form.hidden_tag() }}</p>
+            <p>{{ form.post_pic.label() }} {{ form.post_pic() }}</p>
             <p>{{ form.title.label() }} {{ form.title() }}</p>
             <p>{{ form.body.label() }} {{ form.body() }}</p>
             <p>{{ form.submit() }}

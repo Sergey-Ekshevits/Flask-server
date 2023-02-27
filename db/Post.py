@@ -12,6 +12,7 @@ class Post(db.Model):
     date_modified = Column(String)
     user = db.relationship('User', backref='user_posts')
     comments = db.relationship('Comments', backref='comments')
+    post_pic = Column(String)
 
     # def __repr__(self):
     #     return "<User(name='%s', email='%s', password='%s')>" % (

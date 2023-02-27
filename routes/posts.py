@@ -10,6 +10,7 @@ from db.Post import Post
 from db.Comments import Comments
 from db.db import db
 from bot import bot
+from functions import upload_post_pic
 post = Blueprint('post', __name__,
                  template_folder='templates')
 
@@ -29,9 +30,13 @@ post = Blueprint('post', __name__,
 @post.route('/add_post', methods=['GET', 'POST'])
 def add_post():
     form = PostField()
-    if request.method == "POST":
+    if request.method == "POST" and form.validate_on_submit:
         header = request.form.get('title')
         body = request.form.get('body')
+        post_pic = upload_post_pic(request.files['post_pic'])
+        # upload_post_pic(request.files['post_pic'])
+        # print(post_pic)
+        # print(upload_post_pic(post_pic))
         if len(body) <= 20:
             flash("Текст поста должен быть больше...")
             return render_template('add_post.html', form=form)
@@ -42,12 +47,14 @@ def add_post():
             print(tgUser)
             bot.send_message(tgUser.user_id, "Новый пост создал " + current_user.name + ". Заголовок поста - " + header , 
                          parse_mode='Markdown')
-        post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp)
-        db.session.add(post)
-        db.session.commit()
-
-        # sendMessage()
-        return redirect(url_for("index"))
+        post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp, post_pic=post_pic)
+        try:
+            db.session.add(post)
+            db.session.commit()
+            return redirect(url_for('index'))
+        except:
+            flash("Данные не сохранились")
+        # return redirect(url_for("auth.profile"))
     return render_template('add_post.html', form=form)
 
 @post.route('/post/<id>',methods=['GET', 'POST'])

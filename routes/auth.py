@@ -105,7 +105,6 @@ def change_profile(id):
     if request.method == 'POST' and form.validate_on_submit:
         if 'file' in request.files:
             file = request.files['file']
-            print(file)
             if file.filename != '':
                 filename = upload_avatar(file, updated_user)
                 updated_user.avatar_url = filename

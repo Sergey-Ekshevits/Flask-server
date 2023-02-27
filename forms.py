@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SearchField, SubmitField, BooleanField,PasswordField
+from flask_wtf.file import FileField
 from wtforms.validators import DataRequired, Email, Length
 from flask_ckeditor import CKEditorField
 
@@ -24,6 +25,7 @@ class ChangeProfileForm(RegisterForm):
 class PostField(FlaskForm):
     title = StringField("Post title", validators=[DataRequired(),Length(min=4,max=99)])
     body = CKEditorField("Body", validators=[DataRequired(), Length(min=20,max=1199)])
+    post_pic = FileField('Post picture')
     submit = SubmitField("Отправить")
 class CommentField(FlaskForm):
     content = StringField("Comment", validators=[DataRequired(), Length(min=4,max=400)])
