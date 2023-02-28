@@ -34,9 +34,6 @@ def add_post():
         header = request.form.get('title')
         body = request.form.get('body')
         post_pic = upload_pic(request.files['post_pic'],folder='post-picture')
-        # upload_post_pic(request.files['post_pic'])
-        # print(post_pic)
-        # print(upload_post_pic(post_pic))
         if len(body) <= 20:
             flash("Текст поста должен быть больше...")
             return render_template('add_post.html', form=form)
@@ -54,7 +51,6 @@ def add_post():
             return redirect(url_for('index'))
         except:
             flash("Данные не сохранились")
-        # return redirect(url_for("auth.profile"))
     return render_template('add_post.html', form=form)
 
 @post.route('/post/<id>',methods=['GET', 'POST'])
@@ -69,34 +65,29 @@ def show_post(id):
         db.session.add(comment)
         db.session.commit()
         return redirect(url_for('post.show_post',id=post.id))
-    # print(comments)
     return render_template('post.html', post=post, comments=comments,form=form)
 
 @post.route('/delete_comment/<id>')
 def delete_comment(id):
     comment = Comments.query.filter_by(id=id).first()
     post_id=comment.commented_post
-    # print(int(comment.commentator) == current_user.id)
     if int(comment.commentator) == current_user.id:
         print(comment.commentator, current_user.id, id)
         Comments.query.filter_by(id=id).delete()
         db.session.commit()
     else:
         print("Failed")
-    # post = db.session.query(Comments).get(comment.first().id)
-    # print(comment.commented_post)
-
-    # print(comment.commentator , current_user.id, id)
     return redirect(url_for('post.show_post', id=post_id))
 @post.route('/delete/<id>')
 def delete_post(id):
     post = Post.query.filter_by(id=id).first()
     post_pic = post.post_pic
     if post and current_user.id == post.user.id:
-        delete_file(post_pic, folder="post-picture")
+        if post_pic:
+            delete_file(post_pic, folder="post-picture")
         Post.query.filter_by(id=id).delete()
         db.session.commit()
-    return redirect(url_for('index'))
+    return redirect(request.referrer)
 
 
 @post.route('/change_post/<id>', methods=['GET','POST'])
@@ -108,7 +99,6 @@ def change_post(id):
     form.body.data = post.body
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
-    # print(post.title)
     if current_user.id == post.user.id and request.method == "POST":
         new_title = request.form.get('title')
         new_body = request.form.get('body')

@@ -25,11 +25,6 @@
                 name="next"
                 value="{{ request.args.get('next', '') }}"
         />
-
-{#        <p><label>E-mail</label> <input type="text" name="email" value="" required/>#}
-{#        <p><label>Password</label> <input type="text" name="psw" value="" required/>#}
-{#        <p><input type="checkbox" name="remainme"/> Запомнить меня#}
-{#        <p><input type="submit" value="Войти"/>#}
         <p><a href="{{ url_for('auth.register') }}">Регистрация</a></p>
     </form>
 {% endblock %}
