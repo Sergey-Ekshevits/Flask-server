@@ -56,7 +56,7 @@
                                         <!-- <img src="..." class="card-img-top" alt="..."> -->
                                         <div class="card-body">
                                             <h5 class="card-title">Заголовок: {{ post.title }}</h5>
-                                            <p class="card-text">{{ post.body|safe }}</p>
+                                            <p class="card-text">{{ post.body|safe|deletescript }}</p>
                                             <p class="card-text">Автор: {{ post.user.name }}</p>
                                             <p class="card-text">Дата
                                                 создания: {{ post.date_created|formatdatetime }}</p>
