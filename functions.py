@@ -33,7 +33,6 @@ def upload_avatar(file, user):
     # return redirect(url_for('uploaded_file',
     #                         filename=filename))
 def delete_file(filename, folder):
-
     path = join(UPLOADS_PATH+folder, filename)
     if os.path.isfile(path):
         os.remove(path)

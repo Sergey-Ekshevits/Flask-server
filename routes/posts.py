@@ -10,7 +10,7 @@ from db.Post import Post
 from db.Comments import Comments
 from db.db import db
 from bot import bot
-from functions import upload_pic
+from functions import upload_pic, delete_file
 post = Blueprint('post', __name__,
                  template_folder='templates')
 
@@ -91,7 +91,9 @@ def delete_comment(id):
 @post.route('/delete/<id>')
 def delete_post(id):
     post = Post.query.filter_by(id=id).first()
+    post_pic = post.post_pic
     if post and current_user.id == post.user.id:
+        delete_file(post_pic, folder="post-picture")
         Post.query.filter_by(id=id).delete()
         db.session.commit()
     return redirect(url_for('index'))
