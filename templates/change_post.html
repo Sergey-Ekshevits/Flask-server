@@ -23,6 +23,11 @@
             {#            <input  hidden name="id" value="{{ post.id }}" />#}
             {{ form.hidden_tag() }}
             <p>{{ form.title.label() }} {{ form.title() }}</p>
+            {% if post.post_pic %}
+            <img src="{{ url_for('static', filename="post-picture/" + post.post_pic) }}"
+                 alt="post_pic" class="img-fluid my-5" style="width: 200px;">
+            {% else %}
+            {% endif %}
             <p>{{ form.body.label() }} {{ form.body() }}</p>
             <p>{{ form.submit(class="btn btn-success") }}</p>
             {{ ckeditor.load() }}

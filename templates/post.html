@@ -20,7 +20,12 @@
     {#    {{ post }}#}
     <a href="/">На главную</a>
     {% if post %}
-        <p>{{ post.title }}</p>
+        <p><h2>{{ post.title }}</h2></p>
+        {% if post.post_pic %}
+            <img src="{{ url_for('static', filename="post-picture/" + post.post_pic) }}"
+                 alt="post_pic" class="img-fluid my-5" style="width: 200px;">
+        {% else %}
+        {% endif %}
         <p>{{ post.body|safe }}</p>
         <p>Автор: {{ post.user.name }}</p>
         {% if comments %}

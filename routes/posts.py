@@ -10,7 +10,7 @@ from db.Post import Post
 from db.Comments import Comments
 from db.db import db
 from bot import bot
-from functions import upload_post_pic
+from functions import upload_pic
 post = Blueprint('post', __name__,
                  template_folder='templates')
 
@@ -33,7 +33,7 @@ def add_post():
     if request.method == "POST" and form.validate_on_submit:
         header = request.form.get('title')
         body = request.form.get('body')
-        post_pic = upload_post_pic(request.files['post_pic'],folder='post-picture')
+        post_pic = upload_pic(request.files['post_pic'],folder='post-picture')
         # upload_post_pic(request.files['post_pic'])
         # print(post_pic)
         # print(upload_post_pic(post_pic))
