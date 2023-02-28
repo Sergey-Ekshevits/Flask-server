@@ -8,3 +8,5 @@ blogdb.db
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 .env
+/static/post-picture/
+/static/avatars/

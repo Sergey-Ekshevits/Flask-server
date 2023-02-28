@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SearchField, SubmitField, BooleanField,PasswordField
-from flask_wtf.file import FileField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import DataRequired, Email, Length
 from flask_ckeditor import CKEditorField
-
+# from flask_uploads import UploadSet, IMAGES
+# images = UploadSet('images', IMAGES)
 class LoginForm(FlaskForm):
     email=StringField("E-mail", validators=[Email()])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=4,max=99)])
@@ -21,11 +22,11 @@ class SearchForm(FlaskForm):
     submit = SubmitField("Search")
 class ChangeProfileForm(RegisterForm):
     submit = SubmitField("Внедрить изменения")
-
+# , validators=[FileAllowed(['jpg','jpeg','png'])
 class PostField(FlaskForm):
     title = StringField("Post title", validators=[DataRequired(),Length(min=4,max=99)])
     body = CKEditorField("Body", validators=[DataRequired(), Length(min=20,max=1199)])
-    post_pic = FileField('Post picture')
+    post_pic = FileField('Post picture', default=None, validators=[FileAllowed(['jpg','jpeg','png'],"Only images!")])
     submit = SubmitField("Отправить")
 class CommentField(FlaskForm):
     content = StringField("Comment", validators=[DataRequired(), Length(min=4,max=400)])

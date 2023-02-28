@@ -8,8 +8,8 @@ UPLOADS_POST_PIC_PATH = join(dirname(realpath(__file__)), '.\\static\\post-pictu
 
 def upload_pic(file,folder,new=True):
     if not os.path.exists(UPLOADS_PATH+folder):
-        os.mkdir(UPLOADS_POST_PATH+folder)
-    # if new=False:
+        os.mkdir(UPLOADS_PATH+folder)
+    # if new:
         # if post.post_pic:
         #     delete_file(post.post_pic)
     file_ext = splitext(secure_filename(file.filename))[1]
@@ -32,7 +32,7 @@ def upload_avatar(file, user):
     return filename
     # return redirect(url_for('uploaded_file',
     #                         filename=filename))
-def delete_file(filename, folder):
+def delete_file(filename, folder=''):
     path = join(UPLOADS_PATH+folder, filename)
     if os.path.isfile(path):
         os.remove(path)

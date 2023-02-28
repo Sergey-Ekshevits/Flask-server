@@ -30,10 +30,12 @@ post = Blueprint('post', __name__,
 @post.route('/add_post', methods=['GET', 'POST'])
 def add_post():
     form = PostField()
-    if request.method == "POST" and form.validate_on_submit:
+    if request.method == "POST" and form.validate_on_submit():
         header = request.form.get('title')
         body = request.form.get('body')
-        post_pic = upload_pic(request.files['post_pic'],folder='post-picture')
+        post_pic = ''
+        if 'post_pic' in request.files and request.files["post_pic"].filename !='':
+            post_pic = upload_pic(request.files['post_pic'],folder='post-picture')
         if len(body) <= 20:
             flash("Текст поста должен быть больше...")
             return render_template('add_post.html', form=form)
@@ -42,7 +44,7 @@ def add_post():
         allTgUsers = UserTelegram.query.all()
         for tgUser in allTgUsers:
             print(tgUser)
-            bot.send_message(tgUser.user_id, "Новый пост создал " + current_user.name + ". Заголовок поста - " + header , 
+            bot.send_message(tgUser.user_id, "Новый пост создал " + current_user.name + ". Заголовок поста - " + header ,
                          parse_mode='Markdown')
         post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp, post_pic=post_pic)
         try:
@@ -50,6 +52,7 @@ def add_post():
             db.session.commit()
             return redirect(url_for('index'))
         except:
+            print("NO DATAAAAAAAAAAAAAAAAAAAAAAAAA")
             flash("Данные не сохранились")
     return render_template('add_post.html', form=form)
 
