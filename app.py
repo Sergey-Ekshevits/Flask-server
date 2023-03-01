@@ -11,6 +11,7 @@ from forms import SearchForm
 from flask_migrate import Migrate
 from flask_ckeditor import CKEditor
 from flask_paginate import Pagination, get_page_parameter, get_page_args
+from forms import SelectPostsFilter
 from db.Post import Post
 from db.db import db
 from db.User import User
@@ -135,7 +136,8 @@ def index():
     content = {}
     page = request.args.get('page', 1, type=int)
     myposts = request.args.get('myposts', False, type=bool)
-    print(page)
+    form = SelectPostsFilter()
+
     # posts = Post.query.all()
     if myposts:
         total = len(Post.query.filter(Post.owner == current_user.id).all())
@@ -167,7 +169,8 @@ def index():
         menu=menu,
         total=total,
         pagination=content['pagination'],
-        paginated=paginated
+        paginated=paginated,
+        form = form
     )
 
 

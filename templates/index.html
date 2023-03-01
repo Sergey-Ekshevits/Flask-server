@@ -38,6 +38,7 @@
     {{ pagination.info }}
     {{ pagination.links }}
     <form action="{{ url_for("index") }}" method="get">
+      {% if current_user.is_authenticated %}
         <label>
             Свои посты
             <input name="myposts" type="checkbox"
@@ -45,9 +46,12 @@
                    checked=""
                     {% endif %}
             >
-
         </label>
         <button type="submit">Показать</button>
+    {% endif %}
+        <br></br>
+        <p>{{ form.selection.label() }} {{ form.selection() }}
+        <p>{{ form.submit() }}
     </form>
     <div class="d-flex flex-wrap justify-content-center">
         {% for post in paginated %}
