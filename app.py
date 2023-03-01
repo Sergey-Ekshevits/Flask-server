@@ -1,3 +1,6 @@
+import calendar
+import time
+from dateutil.relativedelta import relativedelta
 import os
 from datetime import datetime, timedelta
 from flask import json
@@ -132,13 +135,20 @@ def base():
 # @app.route('/<int:page>', methods = ['GET', 'POST'])
 # @login_required
 def index():
-    # pag={}
     content = {}
     page = request.args.get('page', 1, type=int)
     myposts = request.args.get('myposts', False, type=bool)
     form = SelectPostsFilter()
-
-    # posts = Post.query.all()
+    current_GMT = time.gmtime()
+    time_stamp = calendar.timegm(current_GMT)
+    time_to_check = datetime.fromtimestamp(time_stamp)
+    if request.method == "GET":
+        req=request.args.get("selection")
+        if req == 'last_month':
+            time_to_exclude = time_to_check + relativedelta(months=-1)
+            ts = str(datetime.timestamp(time_to_exclude))
+            posts = Post.query.filter(Post.date_created >= ts).all()
+            print(posts)
     if myposts:
         total = len(Post.query.filter(Post.owner == current_user.id).all())
         paginated = Post.query.filter(Post.owner == current_user.id).order_by(Post.date_created.desc()).paginate(
@@ -146,25 +156,12 @@ def index():
     else:
         total = len(Post.query.all())
         paginated = Post.query.order_by(Post.date_created.desc()).paginate(page=page, per_page=POSTS_PER_PAGE)
-    # posts=Post.query.paginate(1,3)
-    # pagination = Post.query.paginate(page=page, per_page=POSTS_PER_PAGE)
     content['pagination'] = Pagination(page=page, total=total,
                                        per_page=POSTS_PER_PAGE, css_framework="bootstrap5", display_msg="посты <b>{start} - {end}</b> из \
 <b>{total}</b>")
-    # pag["pagin"] = Pagination(page=page, total=pagination)
-    # print(pagination)
-    # posts = db.session.query(Post).all()
-    # posts2 = db.session.query(Post).join(User).filter(Post.owner == current_user.id).all()
-    # test = db.session.query(User, Post).filter(Post.owner == current_user.id).all()
-
-    # print(posts2)
-    # page = request.args.get('page')
-    # posts = getAllPosts(db, page)
     return render_template(
         'index.html',
-        # posts=posts,
         current_user=current_user,
-        # post_counter=post_counter(db),
         title="Блог",
         menu=menu,
         total=total,
