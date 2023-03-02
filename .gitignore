@@ -10,3 +10,4 @@ blogdb.db
 .env
 /static/post-picture/
 /static/avatars/
+blogdb2.db

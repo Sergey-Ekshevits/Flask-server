@@ -13,6 +13,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+
 </head>
 <body>
 <div class="container">
@@ -20,18 +22,22 @@
     {% block content %}
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
             {% if current_user.is_authenticated %}
-                {% if current_user.avatar_url %}
-                    <img src="{{ url_for('static', filename="avatars/" + current_user.avatar_url) }}"
-                         alt="avatar" class="img-fluid my-5" style="width: 50px;">
-                {% else %}
-                    <img src="{{ url_for('static', filename='default_profile.jpg') }}"
-                         alt="avatar" class="img-fluid my-5" style="width: 50px;">
-                {% endif %}
-                <a href="{{ url_for('auth.profile') }}"
-                   class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-                    Мой профиль
-                </a>
+                <div class="d-flex align-items-center col-md-3 mb-2 mb-md-0">
+                    <a href="{{ url_for('auth.profile') }}"
+                       class="">
 
+                        {% if current_user.avatar_url %}
+                            <img width="50" height="50" class="rounded-circle"
+                                 src="{{ url_for('static', filename="avatars/" + current_user.avatar_url) }}"
+                                 alt="avatar" style="width: 50px;object-fit: cover;object-position: center top">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='default_profile.jpg') }}"
+                                 alt="avatar" width="50" height="50" class="rounded-circle"
+                                 style="width: 50px;object-fit: cover;object-position: center top">
+                        {% endif %}
+
+                    </a>
+                </div>
             {% endif %}
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="{{ url_for('index') }}" class="nav-link px-2 link-secondary">Home</a></li>
@@ -40,12 +46,17 @@
                 {#                <li><a href="#" class="nav-link px-2 link-dark">FAQs</a></li>#}
                 {#                <li><a href="#" class="nav-link px-2 link-dark">About</a></li>#}
             </ul>
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
-                  action="{{ url_for('search') }}" method="get" class="form-contact" name="search">
-                {{ search_form.search_field(class_="form-style") }}
-                {{ search_form.submit(class_="btn btn-primary") }}
-            </form>
-            <div class="col-md-1 text-end">
+            <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                <form
+                        action="{{ url_for('search') }}" method="get" class="form-contact" name="search">
+                    <div class="input-group">
+                        {{ search_form.search_field(class_="form-control") }}
+                        {{ search_form.submit(class_="btn btn-primary") }}
+                    </div>
+
+                </form>
+            </div>
+            <div class="col-md-2 d-flex align-items-center justify-content-end">
                 {% if not current_user.is_authenticated %}
                     <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary me-2">Login</a>
                     <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Sign-up</a>
@@ -58,5 +69,19 @@
         </header>
     {% endblock %}
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+<script
+  src="https://code.jquery.com/jquery-3.6.3.js"
+  integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+{##}
+{#    $('.dropdown-my').select2({#}
+{#        closeOnSelect: false#}
+{#    });#}
+</script>
 </body>
 </html>

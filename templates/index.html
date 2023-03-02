@@ -35,54 +35,36 @@
     {% if current_user.is_authenticated %}
         <a href="{{ url_for("post.add_post") }}" class="btn btn-primary">Создать пост</a>
     {% endif %}
+
+    <form action="{{ url_for("index") }}" method="get">
+        {#      {% if current_user.is_authenticated %}#}
+        {#        <label>#}
+        {#            Свои посты#}
+        {#            <input name="myposts" type="checkbox"#}
+        {#                    {% if request.args.get('myposts') %}#}
+        {#                   checked=""#}
+        {#                    {% endif %}#}
+        {#            >#}
+        {#        </label>#}
+        {#        <button type="submit">Показать</button>#}
+        {#    {% endif %}#}
+        <br></br>
+        <div class="d-flex align-items-center">
+            <p class="me-2">
+                {{ form.selection.label() }} {{ form.selection(class_="dropdown-my") }}
+            </p>
+            <p class="me-2">{{ form.my_post.label() }} {{ form.my_post() }}</p>
+            <p class="me-2">{{ form.submit(class_="btn btn-primary") }}</p>
+        </div>
+    </form>
     {{ pagination.info }}
     {{ pagination.links }}
-    <form action="{{ url_for("index") }}" method="get">
-{#      {% if current_user.is_authenticated %}#}
-{#        <label>#}
-{#            Свои посты#}
-{#            <input name="myposts" type="checkbox"#}
-{#                    {% if request.args.get('myposts') %}#}
-{#                   checked=""#}
-{#                    {% endif %}#}
-{#            >#}
-{#        </label>#}
-{#        <button type="submit">Показать</button>#}
-{#    {% endif %}#}
-        <br></br>
-        <p>{{ form.selection.label() }} {{ form.selection() }}
-            <p>{{ form.my_post.label() }} {{ form.my_post() }}
-        <p>{{ form.submit() }}
-    </form>
     <div class="d-flex flex-wrap justify-content-center">
         {% for post in paginated %}
-            <div class="card">
-                <!-- <img src="..." class="card-img-top" alt="..."> -->
-                <div class="card-body">
-                    <h5 class="card-title">Заголовок: {{ post.title }}</h5>
-                    {% if post.post_pic %}
-                        <img src="{{ url_for('static', filename="post-picture/" + post.post_pic) }}"
-                             alt="post_pic" class="img-fluid my-5" style="width: 100px;">
-                    {% else %}
-                    {% endif %}
-                    <p class="card-text">{{ post.body[:100]|deletescript|safe }}</p>
-                    <p class="card-text">Автор: {{ post.user.name }}</p>
-                    <p class="card-text">Дата создания: {{ post.date_created|formatdatetime }}</p>
-                    {% if post.date_modified %}
-                        <p class="card-text">Изменено: {{ post.date_modified|timedif }}</p>
-                    {% endif %}
-                    <div class="buttons">
-                        <a href="{{ url_for('post.show_post', id=post.id) }}" class="btn btn-success">Читать пост</a>
-                        {% if current_user.is_authenticated and current_user.id==post.user.id %}
-                            <a href="{{ url_for('post.delete_post', id=post.id) }}" class="btn btn-danger">Удалить</a>
-                            <a href="{{ url_for('post.change_post', id=post.id) }}" class="btn btn-warning">Внести
-                                изменения</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+            {% with post=post %}
+                {% include "one-post.html" %}
+            {% endwith %}
         {% endfor %}
-
     </div>
     {{ pagination.links }}
 {% endblock %}

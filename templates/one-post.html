@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Заголовок: {{ post.title }}</h5>
+        {% if post.post_pic %}
+            <img src="{{ url_for('static', filename="post-picture/" + post.post_pic) }}"
+                 alt="post_pic" class="img-fluid my-5"
+                 style="width: 100%;height: 200px; object-fit: cover;object-position: center top">
+        {% else %}
+        {% endif %}
+        <p class="card-text">{{ post.body[:100]|deletescript|safe }}</p>
+        <p class="card-text">Автор: {{ post.user.name }}</p>
+        <p class="card-text">Дата создания: {{ post.date_created|formatdatetime }}</p>
+        {% if post.date_modified %}
+            <p class="card-text">Изменено: {{ post.date_modified|timedif }}</p>
+        {% endif %}
+        <div class="buttons">
+            <a href="{{ url_for('post.show_post', id=post.id) }}" class="btn btn-success">Читать пост</a>
+            {% if current_user.is_authenticated and current_user.id==post.user.id %}
+                <a href="{{ url_for('post.delete_post', id=post.id) }}" class="btn btn-danger">Удалить</a>
+                <a href="{{ url_for('post.change_post', id=post.id) }}" class="btn btn-warning">Внести
+                    изменения</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
