@@ -27,7 +27,6 @@ import os
 from os.path import join, dirname, realpath, splitext
 import uuid
 
-
 DATABASE = 'blogdb.db'
 DATABASE2 = 'blogdb2.db'
 DEBUG = False
@@ -40,7 +39,7 @@ app.config.update(dict(DATABASE=os.path.join(app.root_path, DATABASE)))
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(app.root_path, DATABASE2)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app_ctx= app.app_context()
+app_ctx = app.app_context()
 app_ctx.push()
 db.init_app(app)
 app.secret_key = SECRET_KEY
@@ -53,6 +52,7 @@ login_manager.login_message_category = 'success'
 migrate = Migrate(app, db)
 ckeditor = CKEditor(app)
 POSTS_PER_PAGE = 4
+
 
 class FlaskThread(threading.Thread):
     def run(self) -> None:
@@ -135,29 +135,30 @@ def base():
 # @app.route('/<int:page>', methods = ['GET', 'POST'])
 # @login_required
 def index():
-    content = {}
     page = request.args.get('page', 1, type=int)
-    myposts = request.args.get('myposts', False, type=bool)
-    form = SelectPostsFilter()
+    my_post = request.args.get('my_post', False, type=bool)
+    selection = request.args.get("selection", "all", type=str)
+    form = SelectPostsFilter(my_post=my_post, selection=selection)
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
     time_to_check = datetime.fromtimestamp(time_stamp)
+    query = Post.query
+    print(my_post)
     if request.method == "GET":
-        req=request.args.get("selection")
-        if req == 'last_month':
-            time_to_exclude = time_to_check + relativedelta(months=-1)
-            ts = str(datetime.timestamp(time_to_exclude))
-            posts = Post.query.filter(Post.date_created >= ts).all()
-            print(posts)
-    if myposts:
-        total = len(Post.query.filter(Post.owner == current_user.id).all())
-        paginated = Post.query.filter(Post.owner == current_user.id).order_by(Post.date_created.desc()).paginate(
-            page=page, per_page=POSTS_PER_PAGE)
-    else:
-        total = len(Post.query.all())
-        paginated = Post.query.order_by(Post.date_created.desc()).paginate(page=page, per_page=POSTS_PER_PAGE)
-    content['pagination'] = Pagination(page=page, total=total,
-                                       per_page=POSTS_PER_PAGE, css_framework="bootstrap5", display_msg="посты <b>{start} - {end}</b> из \
+
+        if selection == 'last_month':
+            ts = str(datetime.timestamp(time_to_check + relativedelta(weeks=-1)))
+            # ts = str(datetime.timestamp(time_to_exclude))
+            query = query.filter(Post.date_created >= ts)
+            # print(posts)
+    if my_post and current_user:
+        print(my_post)
+        query = query.filter(Post.owner == current_user.id)
+    query = query.order_by(Post.date_created.desc())
+    total = query.count()
+    paginated = query.paginate(page=page, per_page=POSTS_PER_PAGE)
+    pagination = Pagination(page=page, total=total,
+                            per_page=POSTS_PER_PAGE, css_framework="bootstrap5", display_msg="посты <b>{start} - {end}</b> из \
 <b>{total}</b>")
     return render_template(
         'index.html',
@@ -165,9 +166,9 @@ def index():
         title="Блог",
         menu=menu,
         total=total,
-        pagination=content['pagination'],
+        pagination=pagination,
         paginated=paginated,
-        form = form
+        form=form
     )
 
 
@@ -276,4 +277,3 @@ if __name__ == '__main__':
     bot_run = TelegramThread(daemon=True)
     # bot_run.start()
     app.run(debug=True)
-
