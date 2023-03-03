@@ -33,5 +33,5 @@ class CommentField(FlaskForm):
     submit = SubmitField("Комментировать")
 class SelectPostsFilter(FlaskForm):
     my_post = BooleanField('My Posts', default="checked")
-    selection = SelectField('Select posts', choices=[('all','All posts'),('more_than_month', 'More than 1 months ago'),('last_month', 'Last month'),('last_week','Last week')])
+    selection = SelectField('Select posts', choices=[('all','All posts'),('last_day', 'Last day'),('last_week','Last week'),('last_month', 'Last month')])
     submit = SubmitField("Искать")

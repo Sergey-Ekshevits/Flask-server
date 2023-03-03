@@ -96,16 +96,17 @@ def index():
     time_stamp = calendar.timegm(current_GMT)
     time_to_check = datetime.fromtimestamp(time_stamp)
     query = Post.query
-    print(my_post)
     if request.method == "GET":
-
         if selection == 'last_month':
-            ts = str(datetime.timestamp(time_to_check + relativedelta(weeks=-1)))
-            # ts = str(datetime.timestamp(time_to_exclude))
+            ts = str(datetime.timestamp(time_to_check + relativedelta(months=-1)))
             query = query.filter(Post.date_created >= ts)
-            # print(posts)
+        if selection == 'last_week':
+            ts = str(datetime.timestamp(time_to_check + relativedelta(weeks=-1)))
+            query = query.filter(Post.date_created >= ts)
+        if selection == 'last_day':
+            ts = str(datetime.timestamp(time_to_check + relativedelta(days=-1)))
+            query = query.filter(Post.date_created >= ts)
     if my_post and current_user:
-        print(my_post)
         query = query.filter(Post.owner == current_user.id)
     query = query.order_by(Post.date_created.desc())
     total = query.count()
