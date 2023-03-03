@@ -1,8 +1,14 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from db.db import db
+from sqlalchemy_serializer import SerializerMixin
 
 
-class Post(db.Model):
+# post_category = db.Table('post_category',
+#                     Column('post_id', Integer, ForeignKey('post.id')),
+#                     Column('category_id', Integer, ForeignKey('category.id'))
+#                     )
+
+class Post(db.Model, SerializerMixin):
     __tablename__ = "user_posts"
     id = Column(Integer, primary_key=True)
     title = Column(String, unique=True)
@@ -11,8 +17,9 @@ class Post(db.Model):
     date_created = Column(String, nullable=False)
     date_modified = Column(String)
     user = db.relationship('User', backref='user_posts')
-    comments = db.relationship('Comments', backref='comments')
+    comments = db.relationship('Comments', backref='post')
     post_pic = Column(String)
+    # category = db.relationship('Category', backref='post')
 
     # def __repr__(self):
     #     return "<User(name='%s', email='%s', password='%s')>" % (

@@ -10,21 +10,32 @@ from flask_migrate import Migrate
 from flask_ckeditor import CKEditor
 from flask_paginate import Pagination
 from forms import SelectPostsFilter
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+# import all models for migrate TODO need to fix
+from db.Category import Category
 from db.Post import Post
-from db.db import db
 from db.User import User
+
+from db.db import db
+from routes.api import api
 from routes.auth import auth
 from routes.posts import post
 import bot
 import threading
 import os
+from flask_cors import CORS
 
 DATABASE = 'blogdb2.db'
 DEBUG = False
 SECRET_KEY = '239184u0dasfdasgert3243dfasdfAW32%^'
+
 app = Flask(__name__)
 app.register_blueprint(auth)
 app.register_blueprint(post)
+app.register_blueprint(api)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(app.root_path, DATABASE)
@@ -43,7 +54,9 @@ migrate = Migrate(app, db)
 ckeditor = CKEditor(app)
 POSTS_PER_PAGE = 4
 
-
+CORS(app)
+jwt = JWTManager(app)
+app.config["JWT_SECRET_KEY"] = "43rf34f3t3tg235gg"  # Change this!
 class TelegramThread(threading.Thread):
     def run(self) -> None:
         bot.run_bot(app_ctx)
@@ -167,4 +180,4 @@ def deletescript(value):
 if __name__ == '__main__':
     bot_run = TelegramThread(daemon=True)
     # bot_run.start()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
