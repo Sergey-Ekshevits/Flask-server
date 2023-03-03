@@ -53,14 +53,12 @@ def registrate():
     user = User.query.filter_by(email=request.form.get('email')).first()
     if user:
         return jsonify({"error":"Error on registration"})
-    else:
-        hash = generate_password_hash(data["password"])
-        new_user = User(name=data["name"], email=data["email"], password=hash)
-        db.session.add(new_user)
-        db.session.commit()
-        login_user(new_user, remember=True)
-        return jsonify({"success": 'Successful registration'})
-    return jsonify({})
+    hash = generate_password_hash(data["password"])
+    new_user = User(name=data["name"], email=data["email"], password=hash)
+    db.session.add(new_user)
+    db.session.commit()
+    access_token = create_access_token(identity=data.get('email'))
+    return jsonify(access_token=access_token, user={'name': user.name,'email':user.email,'id':user.id})
 
 @api.post("/login")
 def login():
@@ -70,4 +68,5 @@ def login():
     if not user or not check_password_hash(user.password, password):
         return jsonify({"msg": "Bad username or password"}), 401
     access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token, user={'name': user.name,'email':user.email,'id':user.id})
     return jsonify(access_token=access_token, user={'name': user.name,'email':user.email,'id':user.id})
