@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from db.db import db
 from sqlalchemy_serializer import SerializerMixin
 
-
 # post_category = db.Table('post_category',
 #                     Column('post_id', Integer, ForeignKey('post.id')),
 #                     Column('category_id', Integer, ForeignKey('category.id'))
