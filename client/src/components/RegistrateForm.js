@@ -1,15 +1,14 @@
 import { useState, useContext } from "react"
 import { validateEmail } from "../utils"
 import { observer } from "mobx-react"
-import User from "../store/User"
+import { useStore } from '../store/context';
 
 export const RegistrateForm = observer(() => {
-    const userState = useContext(User)
+    const userStore = useStore((state) => state.userStore);
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [repeatPassword, setRepeatPassword] = useState("")
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (
@@ -30,7 +29,7 @@ export const RegistrateForm = observer(() => {
             return
         }
         try {
-            const response = await userState.registrate(name,
+            const response = await userStore.registrate(name,
                 email,
                 password,
                 repeatPassword)

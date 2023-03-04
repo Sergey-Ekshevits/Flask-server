@@ -1,31 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
 import { PostList } from "./components/PostList"
 import { RegistrateForm } from "./components/RegistrateForm"
 import { LoginForm } from "./components/LoginForm"
-import { restService } from "./services/RestService"
+import { MainRoutes } from "./Routes"
 import { observer } from "mobx-react"
+import { StoreProvider } from "./store/context"
+import { store } from "./store/root"
 
 const App = observer(() => {
-  const [posts, setPosts] = useState([])
-  useEffect(() => {
-    console.log(restService.getHeader());
-    const getPosts = async () => {
-      const posts = await restService.get("http://192.168.1.34:5000/api/posts").then((res) => res.json()).catch(() => [])
-      console.log(posts);
-      setPosts(posts)
-    }
-    getPosts()
-  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        {/* <PostList posts={posts} /> */}
-        <RegistrateForm />
-        <LoginForm />
-      </header>
-    </div>
+    <StoreProvider store={store}>
+      <MainRoutes />
+      {/* <div className="App">
+        <header className="App-header">
+          <PostList />
+          <RegistrateForm />
+          <LoginForm />
+        </header>
+      </div> */}
+    </StoreProvider>
   );
 })
 

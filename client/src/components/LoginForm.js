@@ -1,9 +1,9 @@
 import { useContext, useState } from "react"
 import { validateEmail } from "../utils"
 import { observer } from "mobx-react"
-import User from "../store/User"
+import {useStore} from "../store/context"
 export const LoginForm = observer(() => {
-    const userState = useContext(User)
+    const userStore = useStore((state) => state.userStore);
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
@@ -22,7 +22,7 @@ export const LoginForm = observer(() => {
             return
         }
         try {
-            await userState.login(email, password)
+            await userStore.login(email, password)
             setEmail("")
             setPassword("")
         } catch (error) {
@@ -35,6 +35,7 @@ export const LoginForm = observer(() => {
             <label>
                 <span>Email</span>
                 <input value={email} onChange={(e) => setEmail(e.target.value)} />
+                {/* <TextField id="outlined-basic" label="Outlined" variant="outlined" /> */}
             </label>
             <label>
                 <span>Password</span>
