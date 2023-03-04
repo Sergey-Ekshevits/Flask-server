@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,15 +13,26 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-
+import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 const pages = ['Products', 'Pricing', 'Blog'];
 const loginedUser = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const anonymus = ['Login', 'Registrate'];
 
-export function ResponsiveAppBar({ user }) {
+export const ResponsiveAppBar = ({ user, logout }) => {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [settings, setSettings] = useState([]);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            setSettings(loginedUser)
+        } else {
+            setSettings(anonymus)
+        }
+    }, []);
 
     useEffect(() => {
         if (user) {
@@ -37,11 +49,18 @@ export function ResponsiveAppBar({ user }) {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = () => {
+    const handleCloseNavMenu = (e) => {
+        console.log(e);
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (_e, setting) => {
+        if (setting === "Logout") {
+            logout()
+            return
+        } else if (setting !== "backdropClick") {
+            navigate(setting.toLowerCase(), { replace: true });
+        }
         setAnchorElUser(null);
     };
 
@@ -54,7 +73,7 @@ export function ResponsiveAppBar({ user }) {
                         variant="h6"
                         noWrap
                         component="a"
-                        href="/"
+                        onClick={() => navigate("/")}
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
@@ -63,11 +82,11 @@ export function ResponsiveAppBar({ user }) {
                             letterSpacing: '.3rem',
                             color: 'inherit',
                             textDecoration: 'none',
+                            cursor: "pointer"
                         }}
                     >
                         LOGO
                     </Typography>
-
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -98,7 +117,7 @@ export function ResponsiveAppBar({ user }) {
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                <MenuItem key={page} onClick={(e) => handleCloseNavMenu(e)}>
                                     <Typography textAlign="center">{page}</Typography>
                                 </MenuItem>
                             ))}
@@ -109,7 +128,7 @@ export function ResponsiveAppBar({ user }) {
                         variant="h5"
                         noWrap
                         component="a"
-                        href=""
+                        onClick={() => navigate("/")}
                         sx={{
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },
@@ -119,6 +138,7 @@ export function ResponsiveAppBar({ user }) {
                             letterSpacing: '.3rem',
                             color: 'inherit',
                             textDecoration: 'none',
+                            cursor: "pointer"
                         }}
                     >
                         LOGO
@@ -158,7 +178,7 @@ export function ResponsiveAppBar({ user }) {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={(e) => handleCloseUserMenu(e, setting)}>
                                     <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}
@@ -168,5 +188,4 @@ export function ResponsiveAppBar({ user }) {
             </Container>
         </AppBar>
     );
-}
-export default ResponsiveAppBar;
+};

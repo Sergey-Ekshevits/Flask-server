@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx"
-import { restService } from "../services/RestService"
+import { restService } from "./context"
 
 const KEY_USER = "KEY_USER"
 export class UserStore {
@@ -26,6 +26,7 @@ export class UserStore {
                 password,
                 repeatPassword,
             })).then((res) => res.json())
+            console.log(response);
             this.access_token = response.access_token
             this.user = response.user
             localStorage.setItem(KEY_USER, JSON.stringify({ access_token: response.access_token, user: response.user }))
@@ -56,6 +57,25 @@ export class UserStore {
         }
     }
 
+    logout = async () => {
+        try {
+            this.status = "loading"
+            // const response = await restService.post("/logout", JSON.stringify({
+            //     email,
+            //     password,
+            // })).then((res) => res.json())
+            // console.log(response);
+            this.access_token = null
+            this.user = null
+            localStorage.removeItem(KEY_USER)
+            this.status = "done"
+        } catch (err) {
+            console.log({ err });
+            this.status = "error"
+            this.errorMessage = err
+        }
+    }
+
     init() {
         let response = localStorage.getItem(KEY_USER)
         if (response) {
@@ -64,6 +84,10 @@ export class UserStore {
             this.user = response.user
         }
 
+    }
+
+    refreshToken = async () => {
+        const response = await restService.post()
     }
 }
 const userState = new UserStore()

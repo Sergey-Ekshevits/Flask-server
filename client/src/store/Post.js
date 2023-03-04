@@ -1,21 +1,22 @@
 import { makeAutoObservable } from "mobx"
-import { restService } from "../services/RestService"
+import { restService } from "./context"
 
 export class PostStore {
     posts = []
     status = null
     errorMessage = null
-    userStore = null
-    constructor(userStore) {
+    constructor() {
         makeAutoObservable(this)
-        this.userStore = userStore;
     }
 
     getPosts = async () => {
-        const access_token = this.userStore.access_token
+        if (this.status === "loading") {
+            return
+        }
         try {
             this.status = "loading"
-            const posts = await restService.get("/posts", { access_token }).then((res) => res.json()).catch(() => [])
+            const posts = await restService.get("/posts").then((res) => res.json()).catch(() => [])
+            console.log({ posts });
             this.posts = posts
             this.status = "done"
         } catch (err) {
