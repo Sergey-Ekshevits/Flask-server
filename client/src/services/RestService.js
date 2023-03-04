@@ -2,20 +2,33 @@ import { userStore } from "../store/User"
 
 class RestService {
 
-
-    getHeader = () => {
+    API_URL = "http://192.168.1.34:5000/api"
+    getAuthorizationHeader = () => {
         return {
             "Content-type": "application/json",
-            access_token: userStore.access_token,
             Authorization: `Bearer ${userStore.access_token}`
         }
     }
 
-    post = async (url) => {
-        const headers = this.getHeader()
-        console.log(headers);
-        return fetch(url, {
+    getHeader = () => {
+        return {
+            "Content-type": "application/json",
+        }
+    }
+
+    get = async (url, headers = this.getHeader()) => {
+        // const headers = this.getAuthorizationHeader()
+        return fetch(this.API_URL + url, {
             headers
+        })
+    }
+
+    post = async (url, body, headers = this.getHeader()) => {
+        // const headers = this.getAuthorizationHeader()
+        return fetch(this.API_URL + url, {
+            method: "POST",
+            headers,
+            body
         })
     }
 }
