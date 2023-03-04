@@ -12,7 +12,7 @@ const App = observer(() => {
   useEffect(() => {
     console.log(restService.getHeader());
     const getPosts = async () => {
-      const posts = await restService.post("http://192.168.1.34:5000/api/posts").then((res) => res.json()).catch(() => [])
+      const posts = await restService.get("http://192.168.1.34:5000/api/posts").then((res) => res.json()).catch(() => [])
       console.log(posts);
       setPosts(posts)
     }

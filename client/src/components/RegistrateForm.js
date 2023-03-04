@@ -1,7 +1,10 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { validateEmail } from "../utils"
 import { observer } from "mobx-react"
+import User from "../store/User"
+
 export const RegistrateForm = observer(() => {
+    const userState = useContext(User)
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -9,7 +12,6 @@ export const RegistrateForm = observer(() => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (
             !name ||
             !email ||
@@ -19,28 +21,19 @@ export const RegistrateForm = observer(() => {
             alert("ЗАполни все поля!!")
             return
         }
-        if (!validateEmail(email)) {
-            alert("Нужно ввести корректный email!")
-            return
-        }
+        // if (!validateEmail(email)) {
+        //     alert("Нужно ввести корректный email!")
+        //     return
+        // }
         if (password !== repeatPassword) {
             alert("пароли не совадают")
             return
         }
         try {
-            const response = await fetch("http://192.168.1.34:5000/api/registrate", {
-                method: "POST",
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    password,
-                    repeatPassword
-                })
-            }).then((res) => res.json())
-            console.log(response);
+            const response = await userState.registrate(name,
+                email,
+                password,
+                repeatPassword)
             setName("")
             setEmail("")
             setPassword("")

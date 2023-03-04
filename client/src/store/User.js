@@ -1,5 +1,7 @@
 import { makeAutoObservable } from "mobx"
 import { createContext } from "react"
+import { restService } from "../services/RestService"
+
 const KEY_USER = "KEY_USER"
 class User {
     id = Math.random()
@@ -16,21 +18,21 @@ class User {
         email,
         password,
         repeatPassword) {
-        // this.finished = !this.finished
+        const response = restService.post("/registrate", JSON.stringify({
+            name,
+            email,
+            password,
+            repeatPassword,
+        })).then((res) => res.json()).catch((err) => console.log(err))
+        return response;
     }
 
     async login(email, password) {
-        const response = await fetch("http://192.168.1.34:5000/api/login", {
-            method: "POST",
-            headers: {
-                "Content-type": "application/json"
-            },
-            body: JSON.stringify({
-                email,
-                password,
-            })
-        }).then((res) => res.json())
-        console.log(response);
+        const response = restService.post("/login", JSON.stringify({
+            email,
+            password,
+        })).then((res) => res.json())
+
         this.access_token = response.access_token
         this.user = response.user
         localStorage.setItem(KEY_USER, JSON.stringify({ access_token: response.access_token, user: response.user }))
@@ -38,7 +40,7 @@ class User {
     }
 
     init() {
-        let response =localStorage.getItem(KEY_USER)
+        let response = localStorage.getItem(KEY_USER)
         if (response) {
             response = JSON.parse(response)
             console.log(response);
