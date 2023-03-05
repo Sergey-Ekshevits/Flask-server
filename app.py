@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from flask import Flask
 from flask import render_template, request
 from flask_login import LoginManager, current_user, login_required
+# from flask_marshmallow import Marshmallow
 from forms import SearchForm
 from flask_migrate import Migrate
 from flask_ckeditor import CKEditor
@@ -18,7 +19,7 @@ from flask_jwt_extended import JWTManager
 from db.Category import Category
 from db.Post import Post
 from db.User import User
-
+from db.db import ma
 from db.db import db
 from routes.api import api
 from routes.auth import auth
@@ -57,6 +58,9 @@ POSTS_PER_PAGE = 4
 CORS(app)
 jwt = JWTManager(app)
 app.config["JWT_SECRET_KEY"] = "43rf34f3t3tg235gg"  # Change this!
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
+ma(app)
 class TelegramThread(threading.Thread):
     def run(self) -> None:
         bot.run_bot(app_ctx)

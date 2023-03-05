@@ -1,18 +1,21 @@
-from flask import Blueprint, request
-from flask_login import login_user
+from flask import Blueprint, request, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from db.User import User
 from db.db import db
 from db.Post import Post
 from flask import jsonify
-
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 
+
 api = Blueprint('api', __name__, url_prefix='/api',
-                template_folder='templates')
+                subdomain=None,
+                template_folder='..\\client\\build',
+                url_defaults=None,
+                root_path=None,
+                static_folder='..\\client\\build\\static',
+                static_url_path='..\\client\\build\\static')
 
 
 # @app.route('/modify', methods=['POST'])
@@ -29,11 +32,38 @@ api = Blueprint('api', __name__, url_prefix='/api',
 #         mimetype='application/json'
 #     )
 #     return response
+@api.route("/", defaults={'path': ''})
+def serve(path):
+    return send_file('client/build/index.html')
+
+
+# @api.route("/static/<path>")
+# def serve_static(path):
+#     print(path)
+#     print(213123123)
+#     # pdb.set_trace()
+#     print(api.static_folder + "\\" + path)
+#     return api.send_static_file(api.static_folder + "\\" + path)
+
+
+@api.route("/static/js/<path>")
+def serve_js(path):
+    return send_file(api.static_folder + "\\js\\" + path)
+
+
+@api.route("/static/css/<path>")
+def serve_css(path):
+    return send_file(api.static_folder + "\\css\\" + path)
+
+
 @api.get('/posts')
 @jwt_required()
 def get_posts():
     result = []
     posts = Post.query.all()
+    # post_scheme = PostScheme()
+    # output = post_scheme.dump(posts)
+    # print(post_scheme)
     for one_post in posts:
         post_dict = {
             "title": one_post.title,
@@ -47,18 +77,27 @@ def get_posts():
         result.append(post_dict)
     return jsonify(result)
 
+
 @api.post('/registrate')
 def registrate():
-    data=request.json
+    data = request.json
     user = User.query.filter_by(email=request.form.get('email')).first()
     if user:
-        return jsonify({"error":"Error on registration"})
+        return jsonify({"error": "Error on registration"}), 401
     hash = generate_password_hash(data["password"])
     new_user = User(name=data["name"], email=data["email"], password=hash)
     db.session.add(new_user)
     db.session.commit()
-    access_token = create_access_token(identity=data.get('email'))
-    return jsonify(access_token=access_token, user={'name': user.name,'email':user.email,'id':user.id})
+    access_token = create_access_token(identity=data.get('email'), fresh=True)
+    refresh_token = create_refresh_token(identity=data.get('email'))
+    return jsonify(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        user={'name': new_user.name,
+              'email': new_user.email,
+              'id': new_user.id}
+    )
+
 
 @api.post("/login")
 def login():
@@ -67,6 +106,29 @@ def login():
     user = User.query.filter_by(email=email).first()
     if not user or not check_password_hash(user.password, password):
         return jsonify({"msg": "Bad username or password"}), 401
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token, user={'name': user.name,'email':user.email,'id':user.id})
-    return jsonify(access_token=access_token, user={'name': user.name,'email':user.email,'id':user.id})
+    access_token = create_access_token(identity=email, fresh=True)
+    refresh_token = create_refresh_token(identity=email)
+    return jsonify(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        user={
+            'name': user.name,
+            'email': user.email,
+            'id': user.id
+        }
+    )
+
+
+@api.post("/refresh")
+@jwt_required(refresh=True)
+def refresh():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity)
+    return jsonify(access_token=access_token)
+
+
+@api.post("/logout")
+def logout():
+    response = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(response)
+    return response

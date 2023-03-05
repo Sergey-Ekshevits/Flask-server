@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
-from db.db import db
+from db.db import db, ma
 from sqlalchemy_serializer import SerializerMixin
-
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, fields
+# from db.User import UserScheme
 
 # post_category = db.Table('post_category',
 #                     Column('post_id', Integer, ForeignKey('post.id')),
@@ -27,3 +28,9 @@ class Post(db.Model, SerializerMixin):
     #         self.email,
     #         self.password,
     #     )
+
+# class PostScheme(SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = Post
+#         user = fields.Nested(UserScheme)
+
