@@ -3,10 +3,9 @@
         <p>
             <h4>Categories:</h4>
             {% for category in post.category %}
-               | <a href="#" style="text-decoration: none; color: #dd5b5b">
+                <a href="#" class="btn btn-outline-dark">
                     {{ category.name }}
                 </a>
-
             {% endfor %}
         </p>
     </div>
