@@ -35,3 +35,5 @@ class SelectPostsFilter(FlaskForm):
     my_post = BooleanField('My Posts', default="checked")
     selection = SelectField('Select posts', choices=[('all','All posts'),('last_day', 'Last day'),('last_week','Last week'),('last_month', 'Last month')])
     submit = SubmitField("Искать")
+class CategoryFilter(FlaskForm):
+    category = BooleanField('Categories', default="checked")

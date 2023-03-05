@@ -1,0 +1,13 @@
+{% macro display_category(post) %}
+    <div class="tags">
+        <p>
+            <h4>Categories:</h4>
+            {% for category in post.category %}
+                <a href="#" style="text-decoration: none; color: #dd5b5b">
+                    {{ category.name }}
+                </a>
+                |
+            {% endfor %}
+        </p>
+    </div>
+{% endmacro %}
