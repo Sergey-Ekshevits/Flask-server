@@ -14,6 +14,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { STATIC_POST_URL } from '../constant';
 
 interface ExpandMoreProps extends IconButtonProps {
     expand: boolean;
@@ -33,6 +34,8 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 type PostDto = {
     title: string;
     body: string;
+    post_pic: string;
+    date_created: string;
 }
 type Props = {
     post: PostDto
@@ -44,6 +47,7 @@ export const PostCard = ({ post }: Props) => {
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+    const data = new Date(Number(post.date_created))
 
     return (
         <Card sx={{ maxWidth: 345, height: "100%", display: "flex", flexDirection: "column" }}>
@@ -59,20 +63,20 @@ export const PostCard = ({ post }: Props) => {
                     </IconButton>
                 }
                 title={post.title}
-                subheader="September 14, 2016"
+                subheader={data.toDateString()}
             />
-            {/* <CardMedia
+            <CardMedia
                 component="img"
                 height="194"
-                image="/static/images/cards/paella.jpg"
+                image={STATIC_POST_URL + "/" + post.post_pic}
                 alt="Paella dish"
-            /> */}
+            />
             <CardContent>
                 <Typography variant="body2" color="text.secondary">
                     <div dangerouslySetInnerHTML={{ __html: post.body }} />
                 </Typography>
             </CardContent>
-            <CardActions disableSpacing sx={{ marginTop: "auto" }}>
+            {/* <CardActions disableSpacing sx={{ marginTop: "auto" }}>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon />
                 </IconButton>
@@ -116,7 +120,7 @@ export const PostCard = ({ post }: Props) => {
                         Set aside off of the heat to let rest for 10 minutes, and then serve.
                     </Typography>
                 </CardContent>
-            </Collapse>
+            </Collapse> */}
         </Card>
     );
 }

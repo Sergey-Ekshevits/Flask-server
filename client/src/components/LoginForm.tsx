@@ -31,9 +31,13 @@ export const LoginForm = observer(({ authSuccess: loginSuccess }: Props) => {
         }
         try {
             await userStore.login(email, password)
-            loginSuccess()
-            setEmail("")
-            setPassword("")
+            if (userStore.status === "success") {
+                loginSuccess()
+                setEmail("")
+                setPassword("")
+            } else {
+                alert(userStore.errorMessage)
+            }
         } catch (error) {
             console.log(error);
         }

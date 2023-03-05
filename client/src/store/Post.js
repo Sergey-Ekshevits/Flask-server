@@ -15,7 +15,7 @@ export class PostStore {
         }
         try {
             this.status = "loading"
-            const posts = await restService.get("/posts").then((res) => res.json()).catch(() => [])
+            const posts = await restService.getWithAttempt("/posts").then((res) => res.json()).catch(() => [])
             console.log({ posts });
             this.posts = posts
             this.status = "done"
