@@ -67,10 +67,14 @@ def get_posts():
     for one_post in posts:
         post_dict = {
             "title": one_post.title,
+            "id": one_post.id,
             "body": one_post.body,
+            "post_pic": one_post.post_pic,
+            "date_created": one_post.date_created,
             "user": {
                 "name": one_post.user.name,
                 "id": one_post.user.id,
+                "avatar_url": one_post.user.avatar_url,
                 "email": one_post.user.email
             }
         }
@@ -88,12 +92,14 @@ def registrate():
     new_user = User(name=data["name"], email=data["email"], password=hash)
     db.session.add(new_user)
     db.session.commit()
-    access_token = create_access_token(identity=data.get('email'), fresh=True)
+    access_token = create_access_token(identity=data.get('email'))
     refresh_token = create_refresh_token(identity=data.get('email'))
     return jsonify(
         access_token=access_token,
         refresh_token=refresh_token,
-        user={'name': new_user.name,
+        user={
+                'name': new_user.name,
+                'avatar_url': new_user.avatar_url,
               'email': new_user.email,
               'id': new_user.id}
     )
@@ -106,13 +112,14 @@ def login():
     user = User.query.filter_by(email=email).first()
     if not user or not check_password_hash(user.password, password):
         return jsonify({"msg": "Bad username or password"}), 401
-    access_token = create_access_token(identity=email, fresh=True)
+    access_token = create_access_token(identity=email)
     refresh_token = create_refresh_token(identity=email)
     return jsonify(
         access_token=access_token,
         refresh_token=refresh_token,
         user={
             'name': user.name,
+            'avatar_url': user.avatar_url,
             'email': user.email,
             'id': user.id
         }
@@ -123,7 +130,7 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
-    access_token = create_access_token(identity=identity)
+    access_token = create_access_token(identity=identity, fresh=False)
     return jsonify(access_token=access_token)
 
 

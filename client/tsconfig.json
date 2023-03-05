@@ -1,0 +1,30 @@
+{
+    "ts-node": {
+        // Do not forget to `npm i -D tsconfig-paths`
+        "require": ["tsconfig-paths/register"]
+    },
+    "compilerOptions": {
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "target": "es2017",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "rootDir": "src",
+        "jsx": "react-jsx",
+        "outDir": "build",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "noImplicitAny": true,
+        "strict": true,
+        "resolveJsonModule": true,
+        "allowJs": true,
+        "sourceMap": true,
+
+        "paths": {
+            "@modules/*": ["src/modules/*"],
+            "*": ["node_modules/*"]
+        },
+
+    },
+    "include": ["src/**/*"]
+}
