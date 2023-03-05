@@ -1,17 +1,21 @@
-from flask import Blueprint, request
-from flask_login import login_user
+from flask import Blueprint, request, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from db.User import User
 from db.db import db
 from db.Post import Post
 from flask import jsonify
-
 from flask_jwt_extended import create_access_token, create_refresh_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 
+
 api = Blueprint('api', __name__, url_prefix='/api',
-                template_folder='templates')
+                subdomain=None,
+                template_folder='..\\client\\build',
+                url_defaults=None,
+                root_path=None,
+                static_folder='..\\client\\build\\static',
+                static_url_path='..\\client\\build\\static')
 
 
 # @app.route('/modify', methods=['POST'])
@@ -28,26 +32,50 @@ api = Blueprint('api', __name__, url_prefix='/api',
 #         mimetype='application/json'
 #     )
 #     return response
+@api.route("/", defaults={'path': ''})
+def serve(path):
+    return send_file('client/build/index.html')
+
+
+# @api.route("/static/<path>")
+# def serve_static(path):
+#     print(path)
+#     print(213123123)
+#     # pdb.set_trace()
+#     print(api.static_folder + "\\" + path)
+#     return api.send_static_file(api.static_folder + "\\" + path)
+
+
+@api.route("/static/js/<path>")
+def serve_js(path):
+    return send_file(api.static_folder + "\\js\\" + path)
+
+
+@api.route("/static/css/<path>")
+def serve_css(path):
+    return send_file(api.static_folder + "\\css\\" + path)
+
+
 @api.get('/posts')
-# @jwt_required()
+@jwt_required()
 def get_posts():
     result = []
     posts = Post.query.all()
     # post_scheme = PostScheme()
-    output = post_scheme.dump(posts)
-    print(post_scheme)
-    # for one_post in posts:
-    #     post_dict = {
-    #         "title": one_post.title,
-    #         "body": one_post.body,
-    #         "user": {
-    #             "name": one_post.user.name,
-    #             "id": one_post.user.id,
-    #             "email": one_post.user.email
-    #         }
-    #     }
-    #     result.append(post_dict)
-    return jsonify(output)
+    # output = post_scheme.dump(posts)
+    # print(post_scheme)
+    for one_post in posts:
+        post_dict = {
+            "title": one_post.title,
+            "body": one_post.body,
+            "user": {
+                "name": one_post.user.name,
+                "id": one_post.user.id,
+                "email": one_post.user.email
+            }
+        }
+        result.append(post_dict)
+    return jsonify(result)
 
 
 @api.post('/registrate')
