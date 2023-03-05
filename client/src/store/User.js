@@ -119,7 +119,6 @@ export class UserStore {
     refreshToken = async () => {
         const response = await restService.post("/refresh", "", true);
         const json = await response.json();
-        console.log(json);
         if (response.status === 200) {
             this.access_token = json.access_token
             localStorage.setItem(KEY_USER, JSON.stringify({
@@ -134,4 +133,4 @@ export class UserStore {
         }
     }
 }
-const userState = new UserStore()
+// const userState = new UserStore()

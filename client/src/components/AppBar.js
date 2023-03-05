@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+
 const pages = ['Products', 'Pricing', 'Blog'];
 const loginedUser = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const anonymus = ['Login', 'Registrate'];
@@ -25,14 +24,6 @@ export const ResponsiveAppBar = ({ user, logout }) => {
     const [settings, setSettings] = useState([]);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (user) {
-            setSettings(loginedUser)
-        } else {
-            setSettings(anonymus)
-        }
-    }, []);
 
     useEffect(() => {
         if (user) {

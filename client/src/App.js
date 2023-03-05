@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { PostList } from "./components/PostList"
 import { RegistrateForm } from "./components/RegistrateForm"
 import { LoginForm } from "./components/LoginForm"
-import { MainRoutes } from "./Routes"
+import { MainRoutes } from "./pages/Routes"
 import { observer } from "mobx-react"
 import { StoreProvider } from "./store/context"
 import { store } from "./store/root"

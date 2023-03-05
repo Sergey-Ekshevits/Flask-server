@@ -15,6 +15,11 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { STATIC_POST_URL } from '../constant';
+import * as DOMPurify from 'dompurify';
+import { Menu, MenuItem } from '@mui/material';
+import { Link, NavLink } from "react-router-dom";
+import { PostDto } from "../types";
+import { EmptyPicture } from './EmptyPicture';
 
 interface ExpandMoreProps extends IconButtonProps {
     expand: boolean;
@@ -31,51 +36,123 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
     }),
 }));
 
-type PostDto = {
-    title: string;
-    body: string;
-    post_pic: string;
-    date_created: string;
-}
-type Props = {
-    post: PostDto
-}
 
-export const PostCard = ({ post }: Props) => {
+type Props = {
+    post: PostDto;
+    isOwner: boolean;
+}
+const menu = [{ title: "Удалить", action: "delete" }, { title: "Редактировать", action: "edit" }]
+
+export const PostCard = ({ post, isOwner }: Props) => {
     const [expanded, setExpanded] = React.useState(false);
+    const [anchorElNav, setAnchorElNav] = React.useState(null);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+
+    const handleOpenUserMenu = (event: any) => {
+        setAnchorElNav(event.currentTarget);
+    };
+
+    const handleClosUserMenu = (action: string) => {
+        console.log(action);
+        setAnchorElNav(null);
+    };
+
+
+
     const data = new Date(Number(post.date_created))
 
-    return (
-        <Card sx={{ maxWidth: 345, height: "100%", display: "flex", flexDirection: "column" }}>
-            <CardHeader
-                avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                        R
-                    </Avatar>
-                }
-                action={
-                    <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                    </IconButton>
-                }
-                title={post.title}
-                subheader={data.toDateString()}
-            />
+    const renderTitle = () => {
+        return (
+            <Typography style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxWidth: "140px"
+            }}>
+                {post.title}
+            </Typography>
+
+        )
+    }
+
+    const renderMenu = () => {
+        return (
+            <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={() => handleClosUserMenu("close")}
+
+            >
+                {menu.map((item) => (
+                    <MenuItem key={item.action} onClick={() => handleClosUserMenu(item.action)}>
+                        <Typography textAlign="center">{item.title}</Typography>
+                    </MenuItem>
+                ))}
+            </Menu>
+        )
+    }
+
+    const renderPicture = () => {
+        if (!post.post_pic) {
+            return (
+                <EmptyPicture height={"194"} />
+            )
+        }
+        return (
             <CardMedia
                 component="img"
                 height="194"
                 image={STATIC_POST_URL + "/" + post.post_pic}
                 alt="Paella dish"
             />
-            <CardContent>
-                <Typography variant="body2" color="text.secondary">
-                    <div dangerouslySetInnerHTML={{ __html: post.body }} />
-                </Typography>
-            </CardContent>
+        )
+    }
+    return (
+        <Card sx={{ maxWidth: 345, height: "100%", display: "flex", flexDirection: "column" }}>
+            <CardHeader
+                disableTypography={false}
+                avatar={
+                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                        R
+                    </Avatar>
+                }
+                action={
+                    <>
+                        {isOwner && (<>
+                            <IconButton onClick={handleOpenUserMenu} aria-label="settings">
+                                <MoreVertIcon />
+                            </IconButton>
+                            {renderMenu()}
+                        </>)
+                        }
+                    </>
+                }
+                title={renderTitle()}
+                subheader={data.toDateString()}
+            />
+            <Link to={`/post/${post.id}`} style={{ textDecoration: "none" }}>
+
+                {renderPicture()}
+
+                <CardContent>
+                    <Typography component={'span'} variant="body2" color="text.secondary">
+                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body) }} />
+                    </Typography>
+                </CardContent>
+            </Link>
             {/* <CardActions disableSpacing sx={{ marginTop: "auto" }}>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon />

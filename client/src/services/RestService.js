@@ -10,8 +10,6 @@ export class RestService {
     }
     getAuthorizationHeader = (refresh) => {
         const token = refresh ?  this.userStore.refresh_token : this.userStore.access_token
-
-        console.log( `Authorization: Bearer ${token}`);
         return {
             "Content-type": "application/json",
             Authorization: `Bearer ${token}`
@@ -24,7 +22,7 @@ export class RestService {
         }
     }
 
-    fetch = async (endpoint, data = {}, attempt = 1) => {
+    fetch = async (endpoint, data = {}, attempt = 2) => {
         const url = this.API_URL + endpoint
         const headers = this.getAuthorizationHeader()
         return fetch(url, {...data, headers}).then(async (response) => {
@@ -53,7 +51,6 @@ export class RestService {
 
     post = async (url, body, refresh) => {
         const headers = this.getAuthorizationHeader(refresh)
-        console.log({refresh});
         return fetch(this.API_URL + url, {
             method: "POST",
             headers,
