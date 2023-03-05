@@ -8,6 +8,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, fields
 #                     Column('post_id', Integer, ForeignKey('post.id')),
 #                     Column('category_id', Integer, ForeignKey('category.id'))
 #                     )
+from db.post_category_table import ass_post_category
 
 class Post(db.Model, SerializerMixin):
     __tablename__ = "user_posts"
@@ -20,7 +21,7 @@ class Post(db.Model, SerializerMixin):
     user = db.relationship('User', backref='user_posts')
     comments = db.relationship('Comments', backref='post')
     post_pic = Column(String)
-    # category = db.relationship('Category', backref='post')
+    category = db.relationship('Category',secondary = ass_post_category, backref='post')
 
     # def __repr__(self):
     #     return "<User(name='%s', email='%s', password='%s')>" % (
