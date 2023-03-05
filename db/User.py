@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy_serializer import SerializerMixin
-
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, fields
 from db.db import db
 from flask_login import UserMixin
+# from db.Post import PostScheme
 
 class User(UserMixin, db.Model, SerializerMixin):
     __tablename__ = "users"
@@ -20,3 +21,7 @@ class User(UserMixin, db.Model, SerializerMixin):
             self.email,
             self.password,
         )
+# class UserScheme(SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = User
+#         # posts = fields.Nested(PostScheme)
