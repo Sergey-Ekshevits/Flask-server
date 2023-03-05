@@ -53,7 +53,9 @@
             <p class="me-2">
                 {{ form.selection.label() }} {{ form.selection(class_="dropdown-my") }}
             </p>
-            <p class="me-2">{{ form.my_post.label() }} {{ form.my_post() }}</p>
+            {% if current_user.is_authenticated %}
+                <p class="me-2">{{ form.my_post.label() }} {{ form.my_post() }}</p>
+            {% endif %}
             <p class="me-2">{{ form.submit(class_="btn btn-primary") }}</p>
         </div>
     </form>
