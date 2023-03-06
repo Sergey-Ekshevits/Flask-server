@@ -13,9 +13,10 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from "react-router-dom";
+import { STATIC_AVATAR_URL } from '../constant';
 
 const pages = ['Products', 'Pricing', 'Blog'];
-const loginedUser = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const loginedUser = ['Profile', 'Account', 'create-post', 'Logout'];
 const anonymus = ['Login', 'Registrate'];
 
 export const ResponsiveAppBar = ({ user, logout }) => {
@@ -48,6 +49,7 @@ export const ResponsiveAppBar = ({ user, logout }) => {
     const handleCloseUserMenu = (_e, setting) => {
         if (setting === "Logout") {
             logout()
+            setAnchorElUser(null);
             return
         } else if (setting !== "backdropClick") {
             navigate(setting.toLowerCase(), { replace: true });
@@ -149,7 +151,7 @@ export const ResponsiveAppBar = ({ user, logout }) => {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                <Avatar alt="Remy Sharp" src={STATIC_AVATAR_URL + "\\" + user?.avatar_url} />
                             </IconButton>
                         </Tooltip>
                         <Menu

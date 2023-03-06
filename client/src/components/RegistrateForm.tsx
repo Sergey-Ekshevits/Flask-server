@@ -3,11 +3,13 @@ import { validateEmail } from "../utils"
 import { observer } from "mobx-react"
 import { useStore } from '../store/context';
 import { Box, TextField, Button } from "@mui/material";
+import { useEventAlert } from "../contexts/AppContext";
 type Props = {
     authSuccess: () => void
 }
 export const RegistrateForm = observer(({ authSuccess }: Props) => {
     const userStore = useStore((state) => state.userStore);
+    const eventAlert = useEventAlert();
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -20,15 +22,24 @@ export const RegistrateForm = observer(({ authSuccess }: Props) => {
             !password ||
             !repeatPassword
         ) {
-            alert("ЗАполни все поля!!")
+            eventAlert({
+                message: "Нужно заполнить все поля!",
+                type: "error"
+            })
             return
         }
-        // if (!validateEmail(email)) {
-        //     alert("Нужно ввести корректный email!")
-        //     return
-        // }
+        if (!validateEmail(email)) {
+            eventAlert({
+                message: "Нужно ввести корректный email!",
+                type: "error"
+            })
+            return
+        }
         if (password !== repeatPassword) {
-            alert("пароли не совадают")
+            eventAlert({
+                message: "Пароли не совадают",
+                type: "error"
+            })
             return
         }
         try {

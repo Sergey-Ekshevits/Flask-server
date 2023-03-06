@@ -6,12 +6,14 @@ import TextField from "@mui/material/TextField"
 import React from "react"
 import Button from "@mui/material/Button"
 import Box from "@mui/material/Box"
+import { useEventAlert } from "../contexts/AppContext"
 
 type Props = {
     authSuccess: () => void
 }
 export const LoginForm = observer(({ authSuccess: loginSuccess }: Props) => {
     const userStore = useStore((state) => state.userStore);
+    const eventAlert = useEventAlert();
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
@@ -22,11 +24,17 @@ export const LoginForm = observer(({ authSuccess: loginSuccess }: Props) => {
             !email ||
             !password
         ) {
-            alert("ЗАполни все поля!!")
+            eventAlert({
+                message: "Зaполни все поля!!",
+                type: "error"
+            })
             return
         }
         if (!validateEmail(email)) {
-            alert("Нужно ввести корректный email!")
+            eventAlert({
+                message: "Нужно ввести корректный email!",
+                type: "error"
+            })
             return
         }
         try {
@@ -36,7 +44,10 @@ export const LoginForm = observer(({ authSuccess: loginSuccess }: Props) => {
                 setEmail("")
                 setPassword("")
             } else {
-                alert(userStore.errorMessage)
+                eventAlert({
+                    message: userStore.errorMessage,
+                    type: "error"
+                })
             }
         } catch (error) {
             console.log(error);

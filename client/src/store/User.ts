@@ -140,15 +140,17 @@ export class UserStore {
     }
 
 
-    updateCurrentUser = async (name: string, email: string, file: File) => {
-        this.status = "loading"
+    updateCurrentUser = async (name: string, email: string, file: File | null) => {
         if (this.status === "loading") {
             return
         }
+        this.status = "loading"
         const formData = new FormData();
         formData.append('name', name)
         formData.append('email', email)
-        formData.append('file', file)
+        if (file) {
+            formData.append('file', file)
+        }
         const response = await restService.postWithAttempt("/update_user", formData);
         const json = await response.json();
         if (response.status === 200) {

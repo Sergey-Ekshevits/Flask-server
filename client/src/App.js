@@ -7,18 +7,23 @@ import { MainRoutes } from "./pages/Routes"
 import { observer } from "mobx-react"
 import { StoreProvider } from "./store/context"
 import { store } from "./store/root"
+import EventEmitter from 'events';
+import { AppProvider } from "./contexts/AppContext"
 
+const eventEmitter = new EventEmitter();
 const App = observer(() => {
   return (
     <StoreProvider store={store}>
-      <MainRoutes />
-      {/* <div className="App">
+      <AppProvider value={{ eventEmitter }}>
+        <MainRoutes />
+        {/* <div className="App">
         <header className="App-header">
           <PostList />
           <RegistrateForm />
           <LoginForm />
         </header>
       </div> */}
+      </AppProvider>
     </StoreProvider>
   );
 })

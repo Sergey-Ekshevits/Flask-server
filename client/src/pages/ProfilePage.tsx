@@ -1,23 +1,28 @@
-import {Box, Button, Grid, TextField, Typography} from "@mui/material"
+import { Box, Button, Grid, TextField, Typography } from "@mui/material"
 import Container from "@mui/material/Container"
-import {observer} from "mobx-react";
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import { observer } from "mobx-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import EditableText from "../components/EditableText";
-import {EmptyPicture} from "../components/EmptyPicture";
-import {useStore} from "../store/context";
-import {STATIC_AVATAR_URL} from "../constant";
+import { EmptyPicture } from "../components/EmptyPicture";
+import { useStore } from "../store/context";
+import { STATIC_AVATAR_URL } from "../constant";
+import { useEventAlert } from "../contexts/AppContext";
+import { validateEmail } from "../utils";
 
 
 export const ProfilePage = observer(() => {
+    const userStore = useStore((state) => state.userStore);
     const user = useStore((state) => state.userStore.user);
+    const eventAlert = useEventAlert()
     const [image, setImage] = useState<null | string>(user?.avatar_url ?? "")
     const [hasChanges, setHasChanges] = useState<boolean>(false)
-    const [name, setName] = useState<null | string>(user?.name ?? "")
-    const [email, setEmail] = useState<null | string>(user?.email ?? "")
+    const [name, setName] = useState<string>(user?.name ?? "")
+    const [email, setEmail] = useState<string>(user?.email ?? "")
     const [imageToSend, setImageToSend] = useState<null | File>(null)
 
     const navigate = useNavigate();
+
     const handleFile = (e: any) => {
         console.log(e);
         const file = e.target.files[0]
@@ -27,10 +32,26 @@ export const ProfilePage = observer(() => {
     }
 
 
-    const onSubmit = () => {
-        //         name
-        // email
-        // imageToSend
+    const onSubmit = async () => {
+        if (!email || !name) {
+            eventAlert({
+                message: "Нужно заполнить поля!",
+                type: "error"
+            })
+            return;
+        }
+        if (!validateEmail(email)) {
+            eventAlert({
+                message: "Нужно ввести корректный емейл!",
+                type: "error"
+            })
+            return;
+        }
+        const response = await userStore.updateCurrentUser(
+            name,
+            email,
+            imageToSend
+        )
         setHasChanges(false)
     }
 
@@ -66,26 +87,25 @@ export const ProfilePage = observer(() => {
 
     const renderPicture = () => {
         if (!image) {
-            return <EmptyPicture height={"194"}/>
+            return <EmptyPicture height={"194"} />
         }
         if (imageToSend) {
             return (
                 <img src={image}
-                     style={{maxHeight: "300px", maxWidth: "100%", objectFit: "contain"}}/>
+                    style={{ maxHeight: "300px", maxWidth: "100%", objectFit: "contain" }} />
 
             )
         }
         return (
             <img src={STATIC_AVATAR_URL + "\\" + image}
-                 style={{maxHeight: "300px", maxWidth: "100%", objectFit: "contain"}}/>
+                style={{ maxHeight: "300px", maxWidth: "100%", objectFit: "contain" }} />
         )
     }
+
     return (
         <Container maxWidth="md">
             <Typography mt={2} textAlign="center">ProfilePage</Typography>
-
-            <Grid mt={2} container spacing={2} sx={{alignContent: "stretch"}}>
-
+            <Grid mt={2} container spacing={2} sx={{ alignContent: "stretch" }}>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                     {renderPicture()}
                     <Box mt={2}>
@@ -106,8 +126,8 @@ export const ProfilePage = observer(() => {
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
                     <Box onSubmit={() => {
                     }}>
-                        <EditableText value={name} title={"Имя"} onEdit={onChangeName}/>
-                        <EditableText value={email} title={"E-mail"} onEdit={onChangeEmail}/>
+                        <EditableText value={name} title={"Имя"} onEdit={onChangeName} />
+                        <EditableText value={email} title={"E-mail"} onEdit={onChangeEmail} />
 
                         {/* <TextField
                             margin="dense"
@@ -121,9 +141,9 @@ export const ProfilePage = observer(() => {
                         /> */}
 
                         {hasChanges && (
-                            <Box sx={{justifyContent: "space-between", display: "flex"}} mt={2}>
+                            <Box sx={{ justifyContent: "space-between", display: "flex" }} mt={2}>
                                 <Button onClick={onRefresh} size="small" variant="contained"
-                                        type="button">Сбросить</Button>
+                                    type="button">Сбросить</Button>
                                 <Button
                                     onClick={onSubmit}
                                     size="small"
