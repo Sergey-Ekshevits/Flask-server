@@ -13,11 +13,7 @@ const EditableText = ({ value, title, onEdit }: EditableTextProps) => {
     const inputRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
-        console.log({ edit });
-
         if (edit) {
-            console.log({ inputRef });
-
             inputRef?.current?.focus()
         }
     }, [edit])
@@ -26,6 +22,7 @@ const EditableText = ({ value, title, onEdit }: EditableTextProps) => {
             return (
                 <TextField
                     inputRef={inputRef}
+                    onBlur={() => setEdit(false)}
                     focused
                     onChange={(e: any) => onEdit(e.target.value)}
                     defaultValue={value} id="standard-basic"
