@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
@@ -7,28 +7,28 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import IconButton, {IconButtonProps} from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
+import {red} from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { STATIC_POST_URL } from '../constant';
+import {STATIC_AVATAR_URL, STATIC_POST_URL} from '../constant';
 import * as DOMPurify from 'dompurify';
-import { CardActionArea, Menu, MenuItem } from '@mui/material';
-import { Link, NavLink } from "react-router-dom";
-import { PostDto } from "../types";
-import { EmptyPicture } from './EmptyPicture';
+import {CardActionArea, Menu, MenuItem} from '@mui/material';
+import {Link, NavLink} from "react-router-dom";
+import {PostDto} from "../types";
+import {EmptyPicture} from './EmptyPicture';
 
 interface ExpandMoreProps extends IconButtonProps {
     expand: boolean;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-    const { expand, ...other } = props;
+    const {expand, ...other} = props;
     return <IconButton {...other} />;
-})(({ theme, expand }) => ({
+})(({theme, expand}) => ({
     transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
     marginLeft: 'auto',
     transition: theme.transitions.create('transform', {
@@ -41,9 +41,9 @@ type Props = {
     post: PostDto;
     isOwner: boolean;
 }
-const menu = [{ title: "Удалить", action: "delete" }, { title: "Редактировать", action: "edit" }]
+const menu = [{title: "Удалить", action: "delete"}, {title: "Редактировать", action: "edit"}]
 
-export const PostCard = ({ post, isOwner }: Props) => {
+export const PostCard = ({post, isOwner}: Props) => {
     const [expanded, setExpanded] = React.useState(false);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
 
@@ -59,7 +59,6 @@ export const PostCard = ({ post, isOwner }: Props) => {
         console.log(action);
         setAnchorElNav(null);
     };
-
 
 
     const data = new Date(Number(post.date_created))
@@ -108,7 +107,7 @@ export const PostCard = ({ post, isOwner }: Props) => {
     const renderPicture = () => {
         if (!post.post_pic) {
             return (
-                <EmptyPicture height={"194"} />
+                <EmptyPicture height={"194"}/>
             )
         }
         return (
@@ -121,11 +120,13 @@ export const PostCard = ({ post, isOwner }: Props) => {
         )
     }
     return (
-        <Card sx={{ maxWidth: 345, height: "100%", display: "flex", flexDirection: "column" }}>
+        <Card sx={{maxWidth: 345, height: "100%", display: "flex", flexDirection: "column"}}>
             <CardHeader
                 disableTypography={false}
                 avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                    <Avatar
+                        src={STATIC_AVATAR_URL + "\\" + post.user.avatar_url}
+                        sx={{bgcolor: red[500]}} aria-label="recipe">
                         R
                     </Avatar>
                 }
@@ -133,7 +134,7 @@ export const PostCard = ({ post, isOwner }: Props) => {
                     <>
                         {isOwner && (<>
                             <IconButton onClick={handleOpenUserMenu} aria-label="settings">
-                                <MoreVertIcon />
+                                <MoreVertIcon/>
                             </IconButton>
                             {renderMenu()}
                         </>)
@@ -143,13 +144,13 @@ export const PostCard = ({ post, isOwner }: Props) => {
                 title={renderTitle()}
                 subheader={data.toDateString()}
             />
-            <Link to={`/post/${post.id}`} style={{ textDecoration: "none" }}>
+            <Link to={`/post/${post.id}`} style={{textDecoration: "none"}}>
                 <CardActionArea>
                     {renderPicture()}
 
                     <CardContent>
                         <Typography component={'span'} variant="body2" color="text.secondary">
-                            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body) }} />
+                            <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post.body)}}/>
                         </Typography>
                     </CardContent>
                 </CardActionArea>

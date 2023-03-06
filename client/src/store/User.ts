@@ -1,16 +1,10 @@
 import { makeAutoObservable } from "mobx"
 import { restService } from "./context"
+import {LocalStorageDto, UserDto} from "../types";
 
 const KEY_USER = "KEY_USER"
 
-export type UserDto = {
-    name: string,
-    email: string,
-    avatar_url: string;
-}
-export type LocalStorageDto = {
-    access_token: string, refresh_token: string, user: UserDto
-}
+
 export class UserStore {
     user: null | UserDto = null
     access_token: null | string = null
