@@ -2,9 +2,10 @@ from sqlalchemy import Column, Integer, String
 from db.db import db
 from sqlalchemy_serializer import SerializerMixin, Serializer
 
-class Category(db.Model, SerializerMixin):
+class Category(db.Model,SerializerMixin):
     __tablename__ = "post_category"
-    serialize_only = ('id',)
+    # serialize_only = ()
+    serialize_rules = ("-post",)
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
 

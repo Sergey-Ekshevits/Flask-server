@@ -1,9 +1,12 @@
 from flask import Blueprint, request, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from db.UserTelegram import UserTelegram
 from db.User import User
 from db.db import db
 from db.Post import Post
 from db.Category import Category
+
 from flask import jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
@@ -87,6 +90,7 @@ def get_posts():
 def show_category():
     category = Category.query.all()
     c = [c.to_dict() for c in category]
+    print(c)
     return jsonify(c)
 
 @api.post('/post')
