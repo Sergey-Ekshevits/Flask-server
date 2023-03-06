@@ -1,17 +1,17 @@
 from flask import Blueprint, request, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from db.UserTelegram import UserTelegram
+# from db.UserTelegram import UserTelegram
 from db.User import User
 from db.db import db
 from db.Post import Post
-from db.Category import Category
+# from db.Category import Category
 from db.Comments import Comments
 from flask import jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-from sqlalchemy_serializer import SerializerMixin
+# from sqlalchemy_serializer import SerializerMixin
 
 api = Blueprint('api', __name__, url_prefix='/api',
                 subdomain=None,
