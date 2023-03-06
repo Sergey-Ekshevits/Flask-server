@@ -1,8 +1,10 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from db.db import db
-
-class Comments(db.Model):
+from sqlalchemy_serializer import SerializerMixin
+class Comments(db.Model,SerializerMixin):
     __tablename__ = "post_comments"
+    # serialize_only = ('id',)
+    # serialize_rules = ('-commentator','-commented_post')
     id = Column(Integer, primary_key=True)
     content = Column(String, nullable=False)
     commentator = Column(String, ForeignKey('users.id'))

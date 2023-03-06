@@ -6,7 +6,7 @@ from db.User import User
 from db.db import db
 from db.Post import Post
 from db.Category import Category
-
+from db.Comments import Comments
 from flask import jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
@@ -88,7 +88,7 @@ def get_posts():
 @api.get('/category')
 # @jwt_required()
 def show_category():
-    category = Category.query.all()
+    category = Comments.query.all()
     c = [c.to_dict() for c in category]
     print(c)
     return jsonify(c)

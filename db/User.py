@@ -5,9 +5,9 @@ from db.db import db
 from flask_login import UserMixin
 # from db.Post import PostScheme
 
-class User(UserMixin, db.Model, SerializerMixin):
+class User(UserMixin, db.Model,SerializerMixin):
     __tablename__ = "users"
-
+    serialize_only = ('id',)
     id = Column(Integer, primary_key=True)
     name = Column(String)
     email = Column(String, unique=True)
