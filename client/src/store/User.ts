@@ -2,10 +2,19 @@ import { makeAutoObservable } from "mobx"
 import { restService } from "./context"
 
 const KEY_USER = "KEY_USER"
+
+export type UserDto = {
+    name: string,
+    email: string,
+    avatar_url: string;
+}
+export type LocalStorageDto = {
+    access_token: string, refresh_token: string, user: UserDto
+}
 export class UserStore {
-    user = null
-    access_token = null
-    refresh_token = null
+    user: null | UserDto = null
+    access_token: null | string = null
+    refresh_token: null | string = null
     status = ""
     errorMessage = ""
 
@@ -14,10 +23,10 @@ export class UserStore {
         this.init();
     }
 
-    registrate = async (name,
-        email,
-        password,
-        repeatPassword) => {
+    registrate = async (name: string,
+        email: string,
+        password: string,
+        repeatPassword: string) => {
         if (this.status === "loading") {
             return
         }
@@ -48,11 +57,11 @@ export class UserStore {
         } catch (err) {
             console.log({ err });
             this.status = "error"
-            this.errorMessage = err
+            this.errorMessage = err as string
         }
     }
 
-    login = async (email, password) => {
+    login = async (email: string, password: string) => {
         if (this.status === "loading") {
             return
         }
@@ -81,7 +90,7 @@ export class UserStore {
         } catch (err) {
             console.log({ err });
             this.status = "error"
-            this.errorMessage = err
+            this.errorMessage = err as string
             return Promise.reject();
         }
     }
@@ -101,17 +110,20 @@ export class UserStore {
         } catch (err) {
             console.log({ err });
             this.status = "error"
-            this.errorMessage = err
+            this.errorMessage = err as string
         }
     }
 
     init() {
         let response = localStorage.getItem(KEY_USER)
         if (response) {
-            response = JSON.parse(response)
-            this.access_token = response.access_token
-            this.refresh_token = response.refresh_token
-            this.user = response.user
+            const data: LocalStorageDto = JSON.parse(response)
+            if (data) {
+                this.access_token = data.access_token
+                this.refresh_token = data.refresh_token
+                this.user = data.user
+            }
+
         }
 
     }
@@ -126,6 +138,28 @@ export class UserStore {
                 refresh_token: this.refresh_token,
                 user: this.user
             }))
+            this.status = "success"
+        } else {
+            this.status = "done"
+            this.errorMessage = json.msg
+        }
+    }
+
+
+    updateCurrentUser = async (name: string, email: string, file: File) => {
+        this.status = "loading"
+        if (this.status === "loading") {
+            return
+        }
+        const formData = new FormData();
+        formData.append('name', name)
+        formData.append('email', email)
+        formData.append('file', file)
+        const response = await restService.postWithAttempt("/update_user", formData);
+        const json = await response.json();
+        if (response.status === 200) {
+            this.access_token = json.access_token
+            
             this.status = "success"
         } else {
             this.status = "done"

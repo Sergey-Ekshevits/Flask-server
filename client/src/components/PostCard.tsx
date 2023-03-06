@@ -16,7 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { STATIC_POST_URL } from '../constant';
 import * as DOMPurify from 'dompurify';
-import { Menu, MenuItem } from '@mui/material';
+import { CardActionArea, Menu, MenuItem } from '@mui/material';
 import { Link, NavLink } from "react-router-dom";
 import { PostDto } from "../types";
 import { EmptyPicture } from './EmptyPicture';
@@ -144,14 +144,15 @@ export const PostCard = ({ post, isOwner }: Props) => {
                 subheader={data.toDateString()}
             />
             <Link to={`/post/${post.id}`} style={{ textDecoration: "none" }}>
+                <CardActionArea>
+                    {renderPicture()}
 
-                {renderPicture()}
-
-                <CardContent>
-                    <Typography component={'span'} variant="body2" color="text.secondary">
-                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body) }} />
-                    </Typography>
-                </CardContent>
+                    <CardContent>
+                        <Typography component={'span'} variant="body2" color="text.secondary">
+                            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body) }} />
+                        </Typography>
+                    </CardContent>
+                </CardActionArea>
             </Link>
             {/* <CardActions disableSpacing sx={{ marginTop: "auto" }}>
                 <IconButton aria-label="add to favorites">

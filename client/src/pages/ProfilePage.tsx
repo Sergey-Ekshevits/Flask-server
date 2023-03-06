@@ -1,12 +1,19 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material"
 import Container from "@mui/material/Container"
+import { observer } from "mobx-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import EditableText from "../components/EditableText";
 import { EmptyPicture } from "../components/EmptyPicture";
+import { useStore } from "../store/context";
 
 
-export const ProfilePage = () => {
-    const [image, setImage] = useState<null | string>("")
+export const ProfilePage = observer(() => {
+    const user = useStore((state) => state.userStore.user);
+    const [image, setImage] = useState<null | string>(user?.avatar_url ?? "")
+    const [hasChanges, setHasChanges] = useState<boolean>(false)
+    const [name, setName] = useState<null | string>(user?.name ?? "")
+    const [email, setEmail] = useState<null | string>(user?.email ?? "")
     const [imageToSend, setImageToSend] = useState<null | string>("")
 
     const navigate = useNavigate();
@@ -15,6 +22,35 @@ export const ProfilePage = () => {
         const file = e.target.files[0]
         setImageToSend(file)
         getBase64(file)
+        setHasChanges(true)
+    }
+
+
+    const onSubmit = () => {
+        //         name
+        // email
+        // imageToSend
+        setHasChanges(false)
+    }
+
+    const onChangeName = (name: string) => {
+        setHasChanges(true)
+        setName(name)
+    }
+
+    const onChangeEmail = (name: string) => {
+        setHasChanges(true)
+        setEmail(name)
+    }
+
+
+
+    const onRefresh = () => {
+        setImage(user?.avatar_url ?? "")
+        setName(user?.name ?? "")
+        setEmail(user?.email ?? "")
+        setImageToSend("")
+        setHasChanges(false)
     }
 
     const getBase64 = (file: any) => {
@@ -24,9 +60,9 @@ export const ProfilePage = () => {
             setImage(reader.result as string)
         };
         reader.onerror = function (error) {
-          console.log('Error: ', error);
+            console.log('Error: ', error);
         }
-      }
+    }
 
     const renderPicture = () => {
         if (!image) {
@@ -60,28 +96,11 @@ export const ProfilePage = () => {
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                    <Box mt={1} component="form" onSubmit={() => { }} className="form">
-                        <TextField
-                            margin="dense"
-                            value={"name"}
-                            // onChange={(e) => setName(e.target.value)}
-                            type="text"
-                            id="outlined-basic"
-                            label="Name"
-                            variant="outlined"
-                            size="small"
-                        />
-                        <TextField
-                            margin="dense"
-                            value={"email"}
-                            // onChange={(e: any) => setEmail(e.target.value)}
-                            type="email"
-                            id="outlined-basic"
-                            label="Email"
-                            variant="outlined"
-                            size="small"
-                        />
-                        <TextField
+                    <Box onSubmit={() => { }}>
+                        <EditableText value={name} title={"Имя"} onEdit={onChangeName} />
+                        <EditableText value={email} title={"E-mail"} onEdit={onChangeEmail} />
+
+                        {/* <TextField
                             margin="dense"
                             value={"password"}
                             // onChange={(e: any) => setPassword(e.target.value)}
@@ -90,23 +109,21 @@ export const ProfilePage = () => {
                             label="password"
                             variant="outlined"
                             size="small"
-                        />
-                        <TextField
-                            margin="dense"
-                            value={"repeatPassword"}
-                            // onChange={(e) => setRepeatPassword(e.target.value)}
-                            type="password"
-                            id="outlined-basic"
-                            label="Repeat password"
-                            variant="outlined"
-                            size="small"
-                        />
-                        <Box mt={2}>
-                            <Button size="small" variant="contained" type="submit">Сохранить</Button>
-                        </Box>
+                        /> */}
+
+                        {hasChanges && (
+                            <Box sx={{ justifyContent: "space-between", display: "flex" }} mt={2}>
+                                <Button onClick={onRefresh} size="small" variant="contained" type="button">Сбросить</Button>
+                                <Button
+                                    onClick={onSubmit}
+                                    size="small"
+                                    variant="contained"
+                                    type="button">Сохранить</Button>
+                            </Box>
+                        )}
                     </Box>
                 </Grid>
             </Grid>
         </Container>
     )
-}
+})
