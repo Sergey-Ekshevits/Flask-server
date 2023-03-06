@@ -3,11 +3,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from db.User import User
 from db.db import db
 from db.Post import Post
+from db.Category import Category
 from flask import jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-
+from sqlalchemy_serializer import SerializerMixin
 
 api = Blueprint('api', __name__, url_prefix='/api',
                 subdomain=None,
@@ -81,6 +82,36 @@ def get_posts():
         result.append(post_dict)
     return jsonify(result)
 
+@api.get('/category')
+# @jwt_required()
+def show_category():
+    category = Category.query.all()
+    c = [c.to_dict() for c in category]
+    return jsonify(c)
+
+@api.post('/post')
+@jwt_required()
+def get_post():
+    pass
+
+
+@api.post('/post')
+@jwt_required()
+def delete_post():
+    pass
+
+
+@api.patch('/post')
+@jwt_required()
+def update_post():
+    pass
+
+
+@api.patch('/user')
+@jwt_required()
+def update_user():
+    pass
+
 
 @api.post('/registrate')
 def registrate():
@@ -98,10 +129,10 @@ def registrate():
         access_token=access_token,
         refresh_token=refresh_token,
         user={
-                'name': new_user.name,
-                'avatar_url': new_user.avatar_url,
-              'email': new_user.email,
-              'id': new_user.id}
+            'name': new_user.name,
+            'avatar_url': new_user.avatar_url,
+            'email': new_user.email,
+            'id': new_user.id}
     )
 
 
