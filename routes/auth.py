@@ -16,7 +16,7 @@ def login():
     form = LoginForm()
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    if request.method == "POST":
+    if request.method == "POST" and form.validate_on_submit():
         email = request.form.get('email')
         password = request.form.get('password')
         next_url = request.form.get("next")
@@ -46,7 +46,7 @@ def logout():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
-    if request.method == "POST":
+    if request.method == "POST" and form.validate_on_submit():
         user = User.query.filter_by(email=request.form.get('email')).first()
         if user:
             flash("С таким email пользователь уже существует")

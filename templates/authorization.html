@@ -3,28 +3,29 @@
 <html lang="en">
 <head>
     {% block head %}
-    {{ super() }}
-    <title>Document</title>
+        {{ super() }}
+        <title>Document</title>
     {% endblock %}
 </head>
 <body>
 {% block content -%}
     {{ super() }}
     <h1>Авторизация</h1>
-    {% for cat, msg in get_flashed_messages(True) %}
-        <div class="flash{{ cat }}">{{ msg }}</div>
-    {% endfor %}
+{#    {% for cat, msg in get_flashed_messages(True) %}#}
+{#        <div class="flash{{ cat }}">{{ msg }}</div>#}
+{#    {% endfor %}#}
     <form action="{{ url_for('auth.login') }}" method="post" class="form-contact">
         <p>{{ form.hidden_tag() }}
         <p>{{ form.email.label() }} {{ form.email() }}
+            <span class="validation_error">{{ ','.join(form.email.errors) }}</span><br>
         <p>{{ form.password.label() }} {{ form.password() }}
         <p>{{ form.rememberme.label() }} {{ form.rememberme() }}
         <p>{{ form.submit() }}
-        <input
-                type="hidden"
-                name="next"
-                value="{{ request.args.get('next', '') }}"
-        />
+            <input
+                    type="hidden"
+                    name="next"
+                    value="{{ request.args.get('next', '') }}"
+            />
         <p><a href="{{ url_for('auth.register') }}">Регистрация</a></p>
     </form>
 {% endblock %}

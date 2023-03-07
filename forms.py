@@ -1,18 +1,20 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SearchField, SubmitField, BooleanField,PasswordField, SelectField
+from wtforms import StringField, SearchField, SubmitField, BooleanField,PasswordField, SelectField, EmailField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import DataRequired, Email, Length
 from flask_ckeditor import CKEditorField
+# import email_validator
+# from wtforms.fields.html5 import EmailField
 # from flask_uploads import UploadSet, IMAGES
 # images = UploadSet('images', IMAGES)
 class LoginForm(FlaskForm):
-    email=StringField("E-mail", validators=[Email()])
+    email=EmailField("E-mail", validators=[DataRequired(), Email(message='Only e-mail is allowed, e.g test@test.py')])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=4,max=99)])
     rememberme = BooleanField("Запомнить меня", default=False)
     submit = SubmitField("Войти")
 
 class RegisterForm(FlaskForm):
-    email=StringField("E-mail", validators=[Email()])
+    email=EmailField("E-mail", validators=[DataRequired(), Email(message='Only e-mail is allowed, e.g test@test.py')])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=4,max=99)])
     passwordrpt = PasswordField("Repeat password", validators=[DataRequired(), Length(min=4,max=99)])
     name = StringField("Имя", validators=[DataRequired(), Length(min=3,max=99)])

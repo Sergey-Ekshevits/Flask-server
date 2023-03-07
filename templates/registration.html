@@ -19,6 +19,7 @@
         <p>{{ form.hidden_tag() }}
         <p>{{ form.name.label() }} {{ form.name() }}
         <p>{{ form.email.label() }} {{ form.email() }}
+        <span class="validation_error">{{ ','.join(form.email.errors) }}</span><br>
         <p>{{ form.password.label() }} {{ form.password() }}
         <p>{{ form.passwordrpt.label() }} {{ form.passwordrpt() }}
 
