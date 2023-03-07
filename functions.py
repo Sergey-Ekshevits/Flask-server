@@ -6,7 +6,7 @@ UPLOADS_PATH = join(dirname(realpath(__file__)), '.\\static\\')
 UPLOADS_AVATAR_PATH = join(dirname(realpath(__file__)), '.\\static\\avatars')
 UPLOADS_POST_PIC_PATH = join(dirname(realpath(__file__)), '.\\static\\post-picture')
 
-def upload_pic(file,folder,new=True):
+def upload_pic(file,folder,post):
     if not os.path.exists(UPLOADS_PATH+folder):
         os.mkdir(UPLOADS_PATH+folder)
     # if new:

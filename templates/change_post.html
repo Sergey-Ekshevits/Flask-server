@@ -18,16 +18,19 @@
     {#        {{ post }}#}
     {#    {% endif %}#}
 
-    <form class="formo" action="{{ url_for('post.change_post', id=post.id) }}" method="post">
+    <form class="formo" action="{{ url_for('post.change_post', id=post.id) }}" method="post"
+          enctype=multipart/form-data>
         <div class="mb-3">
             {#            <input  hidden name="id" value="{{ post.id }}" />#}
             {{ form.hidden_tag() }}
             <p>{{ form.title.label() }} {{ form.title() }}</p>
             {% if post.post_pic %}
-            <img src="{{ url_for('static', filename="post-picture/" + post.post_pic) }}"
-                 alt="post_pic" class="img-fluid my-5" style="width: 200px;">
+
+                <img src="{{ url_for('static', filename="post-picture/" + post.post_pic) }}"
+                     alt="post_pic" class="img-fluid my-5" style="width: 200px;">
             {% else %}
             {% endif %}
+            <input type="file" name="file">
             <p>{{ form.body.label() }} {{ form.body() }}</p>
             <p>{{ form.submit(class="btn btn-success") }}</p>
             {{ ckeditor.load() }}

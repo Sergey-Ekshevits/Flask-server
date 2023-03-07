@@ -102,11 +102,19 @@ def change_post(id):
     post = Post.query.filter_by(id=id).first()
     form.title.data = post.title
     form.body.data = post.body
+    post_picture = post.post_pic
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
     if current_user.id == post.user.id and request.method == "POST":
         new_title = request.form.get('title')
         new_body = request.form.get('body')
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename != '':
+                filename = upload_pic(file=file,folder='post-picture', post = post.id)
+                if post.post_pic:
+                    delete_file(post.post_pic, folder="post-picture")
+                post.post_pic = filename
         Post.query.filter_by(id=id).update({
             Post.title: new_title,
             Post.body: new_body,
