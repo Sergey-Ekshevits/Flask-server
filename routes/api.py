@@ -115,7 +115,7 @@ def update_post():
     post = Post.query.filter_by(id=id).first()
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
-    if current_user.id == post.user.id and request.method == "POST":
+    if current_user.id == post.user.id:
         new_title = request.json.get('title')
         new_body = request.json.get('body')
         Post.query.filter_by(id=id).update({
