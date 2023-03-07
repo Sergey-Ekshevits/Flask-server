@@ -85,11 +85,11 @@ def get_posts():
         result.append(post_dict)
     return jsonify(result)
 
-@api.get('/category')
+@api.get('/serialized')
 # @jwt_required()
-def show_category():
-    category = Comments.query.all()
-    c = [c.to_dict() for c in category]
+def show_serialized():
+    post = Post.query.all()
+    c = [c.to_dict() for c in post]
     print(c)
     return jsonify(c)
 

@@ -13,7 +13,7 @@ from db.post_category_table import ass_post_category
 class Post(db.Model,SerializerMixin):
     __tablename__ = "user_posts"
     serialize_only = ()
-    serialize_rules = ('-comments.post',)
+    serialize_rules = ('-comments.post.comments','-category.post')
     id = Column(Integer, primary_key=True)
     title = Column(String, unique=True)
     body = Column(String, nullable=False)

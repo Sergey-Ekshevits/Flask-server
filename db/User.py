@@ -7,7 +7,7 @@ from flask_login import UserMixin
 
 class User(UserMixin, db.Model,SerializerMixin):
     __tablename__ = "users"
-    serialize_only = ('id',)
+    serialize_only = ('id','name','email','avatar_url')
     id = Column(Integer, primary_key=True)
     name = Column(String)
     email = Column(String, unique=True)
