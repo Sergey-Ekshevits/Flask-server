@@ -1,5 +1,7 @@
 import calendar
 import time
+
+from db.Category import Category
 from db.UserTelegram import UserTelegram
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for
@@ -113,3 +115,9 @@ def change_post(id):
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('change_post.html',post=post, form=form)
+
+
+@post.route('/category/<category_name>')
+def show_category(category_name):
+    category = Category.query.filter_by(name=category_name).first_or_404()
+    return render_template('category.html', category=category)

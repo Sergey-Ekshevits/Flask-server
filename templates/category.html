@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        {{ super() }}
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% endblock %}
+    <title>Title</title>
+</head>
+<body>
+{% block content -%}
+    {{ super() }}
+    <h1>Выбранные категории постов:</h1>
+    <h3>{{ category.name }}</h3>
+    <p>Найдено постов: {{ category.post|length }}</p>
+    <div class="d-flex flex-wrap justify-content-center">
+        {% for post in category.post %}
+            {% with post=post %}
+                {% include "one-post.html" %}
+            {% endwith %}
+
+
+        {% endfor %}
+    </div>
+{% endblock %}
+</body>
+</html>
