@@ -1,4 +1,8 @@
+import calendar
+import time
+
 from flask import Blueprint, request, send_file
+from flask_login import current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # from db.UserTelegram import UserTelegram
@@ -108,8 +112,23 @@ def delete_post():
 @api.patch('/post')
 @jwt_required()
 def update_post():
-    pass
-
+    post = Post.query.filter_by(id=id).first()
+    current_GMT = time.gmtime()
+    time_stamp = calendar.timegm(current_GMT)
+    if current_user.id == post.user.id and request.method == "POST":
+        new_title = request.json.get('title')
+        new_body = request.json.get('body')
+        Post.query.filter_by(id=id).update({
+            Post.title: new_title,
+            Post.body: new_body,
+            Post.date_modified: time_stamp
+        })
+        db.session.commit()
+    return jsonify(post={
+        'title': post.title,
+        'body': post.body,
+        'date_modified':post.date_modified
+    })
 
 @api.patch('/user')
 @jwt_required()
