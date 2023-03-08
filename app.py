@@ -11,9 +11,6 @@ from flask_migrate import Migrate
 from flask_ckeditor import CKEditor
 from flask_paginate import Pagination
 from forms import SelectPostsFilter
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 # import all models for migrate TODO need to fix
 from db.Category import Category
@@ -28,10 +25,11 @@ import bot
 import threading
 import os
 from flask_cors import CORS
-
+from dotenv import load_dotenv
+load_dotenv()
 DATABASE = 'blogdb2.db'
 DEBUG = False
-SECRET_KEY = '239184u0dasfdasgert3243dfasdfAW32%^'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 app = Flask(__name__)
 app.register_blueprint(auth)
@@ -57,7 +55,7 @@ POSTS_PER_PAGE = 4
 
 CORS(app)
 jwt = JWTManager(app)
-app.config["JWT_SECRET_KEY"] = "43rf34f3t3tg235gg"  # Change this!
+app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')  # Change this!
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 ma(app)
