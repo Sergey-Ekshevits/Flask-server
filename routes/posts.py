@@ -3,10 +3,8 @@ import time
 
 from db.Category import Category
 from db.UserTelegram import UserTelegram
-
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
-from sqlalchemy import select, update, delete, values
 from forms import PostField, CommentField
 from db.Post import Post
 from db.Comments import Comments
@@ -16,19 +14,6 @@ from functions import upload_pic, delete_file
 post = Blueprint('post', __name__,
                  template_folder='templates')
 
-
-# @post.route('/create_post', methods=['POST'])
-# def create_post():
-#     print(current_user.id)
-#     header = request.form.get('header')
-#     body = request.form.get('body')
-#     current_GMT = time.gmtime()
-#     time_stamp = calendar.timegm(current_GMT)
-#     post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp)
-#     db.session.add(post)
-#     db.session.commit()
-#     # print(post)
-#     return redirect(url_for('index'))
 @post.route('/add_post', methods=['GET', 'POST'])
 def add_post():
     form = PostField()
@@ -112,8 +97,8 @@ def change_post(id):
             file = request.files['file']
             if file.filename != '':
                 filename = upload_pic(file=file,folder='post-picture', post = post.id)
-                if post.post_pic:
-                    delete_file(post.post_pic, folder="post-picture")
+                if post_picture:
+                    delete_file(post_picture, folder="post-picture")
                 post.post_pic = filename
         Post.query.filter_by(id=id).update({
             Post.title: new_title,
@@ -123,8 +108,6 @@ def change_post(id):
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('change_post.html',post=post, form=form)
-
-
 @post.route('/category/<category_name>')
 def show_category(category_name):
     category = Category.query.filter_by(name=category_name).first_or_404()

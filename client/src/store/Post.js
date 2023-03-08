@@ -1,10 +1,11 @@
-import { makeAutoObservable } from "mobx"
-import { restService } from "./context"
+import {makeAutoObservable} from "mobx"
+import {restService} from "./context"
 
 export class PostStore {
     posts = []
     status = null
     errorMessage = null
+
     constructor() {
         makeAutoObservable(this)
     }
@@ -17,7 +18,7 @@ export class PostStore {
             this.status = "loading"
             const posts = await restService.getWithAttempt("/posts")
                 .then((res) => res.json()).catch(() => [])
-            console.log({ posts });
+            console.log({posts});
             this.posts = posts
             this.status = "done"
         } catch (err) {
@@ -50,13 +51,18 @@ export class PostStore {
             return
         }
         try {
+            const data = new FormData()
+            data.append("title", JSON.stringify(title))
+            data.append("body", JSON.stringify(body))
+            if (image) {
+                data.append("file", image)
+            }
             this.status = "loading"
-            const response = await restService.patchWithAttempt("/post",
-                JSON.stringify({
-                    id, title, body
-                })
+            const response = await restService.patchWithAttempt(`/post/${id}`,
+                data,
+                true
             )
-            console.log({ response });
+            console.log({response});
             if (response.status === 200) {
                 this.status = "success"
                 const json = await response.json();
@@ -74,10 +80,11 @@ export class PostStore {
 
     deletePost = async (id) => {
         try {
-            await new Promise((res) => setTimeout(res, 3000))
-            // const response = await restService.deleteWithAttempt(`/post/${id}`)
-            const response = {}
-            console.log({ response });
+            console.log({id})
+            // await new Promise((res) => setTimeout(res, 3000))
+            const response = await restService.deleteWithAttempt(`/post/${id}`)
+            // const response = {}
+            console.log({response});
             if (response.status === 200) {
                 this.status = "success"
 

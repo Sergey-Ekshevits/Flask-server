@@ -15,7 +15,9 @@ from flask import jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
+
 # from sqlalchemy_serializer import SerializerMixin
+from functions import delete_file, upload_pic
 
 api = Blueprint('api', __name__, url_prefix='/api',
                 subdomain=None,
@@ -26,20 +28,6 @@ api = Blueprint('api', __name__, url_prefix='/api',
                 static_url_path='..\\client\\build\\static')
 
 
-# @app.route('/modify', methods=['POST'])
-# def modify():
-#     posts_to_json = []
-#     posts = Post.query.all()
-#     for one_post in posts:
-#         post_dict = {"title": one_post.title, "body": one_post.body}
-#         posts_to_json.append(post_dict)
-#     print(posts_to_json)
-#     response = app.response_class(
-#         response=json.dumps(posts_to_json),
-#         status=200,
-#         mimetype='application/json'
-#     )
-#     return response
 @api.route("/", defaults={'path': ''})
 def serve(path):
     return send_file('client/build/index.html')
@@ -64,9 +52,10 @@ def serve_css(path):
     return send_file(api.static_folder + "\\css\\" + path)
 
 
-@api.get('/posts')
+#  not need
+@api.get('/serialized')
 @jwt_required()
-def get_posts():
+def get_posts2():
     result = []
     posts = Post.query.all()
     # post_scheme = PostScheme()
@@ -89,50 +78,72 @@ def get_posts():
         result.append(post_dict)
     return jsonify(result)
 
-@api.get('/serialized')
+
+@api.get('/posts')
 # @jwt_required()
-def show_serialized():
+def get_posts():
     post = Post.query.all()
     c = [c.to_dict() for c in post]
-    print(c)
     return jsonify(c)
 
-@api.post('/post')
+
+@api.post('/post/<id>')
 @jwt_required()
-def get_post():
-    pass
+def get_post(id):
+    post = Post.query.filter_by(id=id).first()
+    if post:
+        return jsonify(post.to_dict())
+    return jsonify({"msg": "Нет поста по такому id"}), 404
 
 
-@api.post('/post')
+@api.delete('/post/<id>')
 @jwt_required()
-def delete_post():
-    pass
+def delete_post(id):
+    post = Post.query.filter_by(id=id).first()
+    if post:
+        if post.post_pic:
+            delete_file(post.post_pic, folder="post-picture")
+        Post.query.filter_by(id=id).delete()
+        db.session.commit()
+        return jsonify({id: post.id})
+    return jsonify({id: post.id}), 404
 
 
-@api.patch('/post')
+@api.patch('/post/<id>')
 @jwt_required()
-def update_post():
+def update_post(id):
     post = Post.query.filter_by(id=id).first()
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
-    if current_user.id == post.user.id:
-        new_title = request.json.get('title')
-        new_body = request.json.get('body')
-        Post.query.filter_by(id=id).update({
-            Post.title: new_title,
-            Post.body: new_body,
-            Post.date_modified: time_stamp
-        })
+    if post:
+        post.title = request.form.get('title')
+        post.body = request.form.get('body')
+        # print(request.form.get("file"))
+        # pic = request.files['file']
+        print(request.form)
+        print(request.form.get('body'))
+        # if pic:
+        #     post.post_pic = upload_pic(pic, folder='post-picture')
+        post.date_modified = time_stamp
         db.session.commit()
-    return jsonify(post={
-        'title': post.title,
-        'body': post.body,
-        'date_modified':post.date_modified
-    })
+    return jsonify(post=post.to_dict())
+
 
 @api.patch('/user')
 @jwt_required()
 def update_user():
+    pass
+
+
+@api.post('/comment')
+@jwt_required()
+def add_comment():
+    pass
+
+
+@api.post('/post')
+@jwt_required()
+def add_post():
     pass
 
 
@@ -141,7 +152,7 @@ def registrate():
     data = request.json
     user = User.query.filter_by(email=request.form.get('email')).first()
     if user:
-        return jsonify({"error": "Error on registration"}), 401
+        return jsonify({"msg": "Error on registration"}), 401
     hash = generate_password_hash(data["password"])
     new_user = User(name=data["name"], email=data["email"], password=hash)
     db.session.add(new_user)
@@ -151,11 +162,7 @@ def registrate():
     return jsonify(
         access_token=access_token,
         refresh_token=refresh_token,
-        user={
-            'name': new_user.name,
-            'avatar_url': new_user.avatar_url,
-            'email': new_user.email,
-            'id': new_user.id}
+        user=new_user.to_dict()
     )
 
 

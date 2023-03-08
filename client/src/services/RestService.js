@@ -1,17 +1,20 @@
-import { API_URL } from "../constant"
+import {API_URL} from "../constant"
 
 export class RestService {
 
 
     API_URL = API_URL
     userStore = null;
+
     constructor(userStore) {
         this.userStore = userStore
     }
-    getAuthorizationHeader = (refresh) => {
+
+    getAuthorizationHeader = (refresh, isForm) => {
+        const contentType = isForm ? "application/x-www-form-urlencoded" : "application/json";
         const token = refresh ? this.userStore.refresh_token : this.userStore.access_token
         return {
-            "Content-type": "application/json",
+            "Content-type": contentType,
             Authorization: `Bearer ${token}`
         }
     }
@@ -22,10 +25,10 @@ export class RestService {
         }
     }
 
-    fetch = async (endpoint, data = {}, attempt = 2) => {
+    fetch = async (endpoint, data = {}, isForm = false, attempt = 2) => {
         const url = this.API_URL + endpoint
-        const headers = this.getAuthorizationHeader()
-        return fetch(url, { ...data, headers }).then(async (response) => {
+        const headers = this.getAuthorizationHeader(false, true)
+        return fetch(url, {...data, headers}).then(async (response) => {
             if (attempt < 0) {
                 this.userStore.logout()
                 return
@@ -42,11 +45,11 @@ export class RestService {
         return this.fetch(url)
     }
 
-    patchWithAttempt = async (url, body) => {
+    patchWithAttempt = async (url, body, isForm) => {
         return this.fetch(url, {
             method: "PATCH",
             body
-        })
+        }, isForm)
     }
 
     postWithAttempt = async (url, body) => {
