@@ -58,9 +58,10 @@ export class PostStore {
                 data.append("file", image)
             }
             this.status = "loading"
-            const response = await restService.patchWithAttempt(`/post/${id}`,
+            const additionalHeader = restService.getFormDataHeader();
+            const response = await restService.patchMultiData(`/post/${id}`,
                 data,
-                true
+                additionalHeader
             )
             console.log({response});
             if (response.status === 200) {
