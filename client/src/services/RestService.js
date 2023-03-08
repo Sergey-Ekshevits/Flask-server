@@ -13,7 +13,6 @@ export class RestService {
     getAuthorizationHeader = (refresh) => {
         const token = refresh ? this.userStore.refresh_token : this.userStore.access_token
         return {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
         }
     }
@@ -31,60 +30,80 @@ export class RestService {
         }
     }
 
-    fetch = async (endpoint, data = {}, additionalHeader = {}, attempt = 2) => {
+    fetchAttempts = async (endpoint, data = {}, additionalHeader = {}, attempt = 2) => {
         const url = this.API_URL + endpoint
-        let headers = this.getAuthorizationHeader()
-        headers = { ...headers, ...additionalHeader }
-        return fetch(url, { ...data, headers }).then(async (response) => {
+        const headers = { ...this.getAuthorizationHeader(), ...additionalHeader }
+        const options = { ...data, headers };
+        console.log({ options });
+
+        return fetch(url, options).then(async (response) => {
+            console.log({ response });
+            console.log({ attempt });
             if (attempt < 0) {
                 this.userStore.logout()
                 return
             }
             if (response.status === 401) {
-                await this.userStore.refreshToken()
-                return this.fetch(endpoint, data, --attempt)
+                try {
+                    await this.userStore.refreshToken()
+                } catch (error) {
+                    console.log({error});
+                    return;
+                }
+                return this.fetchAttempts(endpoint, data, additionalHeader, --attempt)
             }
             return response;
+        }).catch((error) => {
+            console.log({ error });
         })
     }
 
     getWithAttempt = async (url) => {
-        return this.fetch(url)
+        const additionalHeader = this.getHeader()
+        return this.fetchAttempts(url, {}, additionalHeader)
     }
 
-    patchWithAttempt = async (url, body, additionalHeader) => {
-        return this.fetch(url, {
-            method: "PATCH",
-            body,
-        }, additionalHeader
+    patchWithAttempt = async (url, body) => {
+        const additionalHeader = this.getHeader()
+        return this.fetchAttempts(url,
+            {
+                method: "PATCH",
+                body,
+            },
+            additionalHeader
         )
     }
 
     patchMultiData = async (url, body) => {
-        const headers = this.getAuthorizationHeader()
-        delete headers['Content-Type']
-        return fetch(this.API_URL + url, {
-            method: "PATCH",
-            body,
-            headers
-        })
+        return this.fetchAttempts(url,
+            {
+                method: "PATCH",
+                body,
+            },
+        )
     }
 
-    postWithAttempt = async (url, body, additionalHeader) => {
-        return this.fetch(url, {
-            method: "POST",
-            body
-        }, additionalHeader)
+    postWithAttempt = async (url, body) => {
+        const additionalHeader = this.getHeader()
+        return this.fetchAttempts(url,
+            {
+                method: "POST",
+                body
+            },
+            additionalHeader)
     }
 
     deleteWithAttempt = async (url) => {
-        return this.fetch(url, {
+        return this.fetchAttempts(url, {
             method: "DELETE"
         })
     }
 
     post = async (url, body, refresh) => {
-        const headers = this.getAuthorizationHeader(refresh)
+        const headers = {
+            ...this.getAuthorizationHeader(refresh),
+            ...this.getHeader(),
+        }
         return fetch(this.API_URL + url, {
             method: "POST",
             headers,
@@ -93,7 +112,10 @@ export class RestService {
     }
 
     get = async (url) => {
-        const headers = this.getAuthorizationHeader()
+        const headers = {
+            ...this.getAuthorizationHeader(),
+            ...this.getHeader(),
+        }
         return fetch(this.API_URL + url, {
             headers
         })

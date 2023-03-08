@@ -154,8 +154,9 @@ export const PostCard = ({ post, isOwner, deletePost }: Props) => {
             <CardHeader
                 disableTypography={false}
                 avatar={
+                    
                     <Avatar
-                        src={STATIC_AVATAR_URL + "\\" + post.user.avatar_url}
+                         src={post.user.avatar_url && STATIC_AVATAR_URL + "\\" + post.user.avatar_url}
                         sx={{ bgcolor: red[500] }} aria-label="recipe">
                         R
                     </Avatar>

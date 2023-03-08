@@ -79,11 +79,10 @@ def get_posts2():
 
 
 @api.get('/posts')
-# @jwt_required()
+@jwt_required()
 def get_posts():
     post = Post.query.all()
     c = [c.to_dict() for c in post]
-    print(c)
     return jsonify(c)
 
 
@@ -116,9 +115,8 @@ def update_post(id):
     current_GMT = time.gmtime()
     time_stamp = calendar.timegm(current_GMT)
     if post:
-        data = request.form.to_dict()
-        post.title = data.get('title')
-        post.body = data.get('body')
+        post.title = request.form.get("title","")
+        post.body = request.form.get("body","")
         pic = request.files.get("file")
         if pic:
             post.post_pic = upload_pic(pic, folder='post-picture', post=post)

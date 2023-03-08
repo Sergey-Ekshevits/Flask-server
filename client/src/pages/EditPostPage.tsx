@@ -34,9 +34,9 @@ const CreatePostPage = observer(({ }: CreatePostPageProps) => {
 
 
     const setPost = (post: PostDto) => {
-        setBody(post.body)
-        setTitle(post.title)
-        post.post_pic && setImage(post.post_pic)
+        setBody(post?.body)
+        setTitle(post?.title)
+        post?.post_pic && setImage(post?.post_pic)
     }
 
     const onSubmit = async () => {
@@ -53,6 +53,8 @@ const CreatePostPage = observer(({ }: CreatePostPageProps) => {
                 message: "Пост обновлен!",
                 type: "success"
             })
+            setImageToSend(null)
+            setHasChanges(false)
             setPost(post)
         }
     }
@@ -76,6 +78,11 @@ const CreatePostPage = observer(({ }: CreatePostPageProps) => {
         reader.onerror = function (error) {
             console.log('Error: ', error);
         }
+    }
+
+    const onChange = (value: string, cb: (value: string) => void) => {
+        cb(value)
+        setHasChanges(true)
     }
 
     const renderPicture = () => {
@@ -104,20 +111,20 @@ const CreatePostPage = observer(({ }: CreatePostPageProps) => {
 
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6} >
-                    <Button
+                    {hasChanges && <Button
                         onClick={onSubmit}
                         sx={{ marginLeft: "auto", display: "flex" }}
                         variant="contained"
                     >
                         Сохранить
-                    </Button>
+                    </Button>}
                 </Grid>
             </Grid>
 
             <TextField
                 margin="dense"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => onChange(e.target.value, setTitle)}
                 type="text"
                 id="outlined-basic"
                 label="Заголовок"
@@ -125,7 +132,11 @@ const CreatePostPage = observer(({ }: CreatePostPageProps) => {
                 size="small"
             />
             <Box mt={1}>
-                <Editor value={body} setValue={setBody} />
+                <Editor value={body} setValue={(value: string) => {
+                    setBody(value)
+                    setHasChanges(true)
+                    // onChange(value, )
+                }} />
             </Box>
             <Box mt={2}>
                 {renderPicture()}
