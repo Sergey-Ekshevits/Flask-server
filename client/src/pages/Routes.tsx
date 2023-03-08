@@ -11,6 +11,7 @@ import { ProtectedRoute } from '../components/ProtectedRoute';
 import { ProfilePage } from './ProfilePage';
 import CreatePostPage from './CreatePostPage';
 import TransitionAlerts from '../components/Alert';
+import EditPostPage from './EditPostPage';
 
 export const MainRoutes = observer(() => {
     const user = useStore((state) => state.userStore.user)
@@ -41,6 +42,12 @@ export const MainRoutes = observer(() => {
                     element={
                         <ProtectedRoute user={user}>
                             <CreatePostPage />
+                        </ProtectedRoute>
+                    } />
+                <Route path="/edit-post/:id"
+                    element={
+                        <ProtectedRoute user={user}>
+                            <EditPostPage />
                         </ProtectedRoute>
                     } />
             </Routes>

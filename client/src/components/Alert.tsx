@@ -12,18 +12,31 @@ import { Container } from '@mui/material';
 export default function TransitionAlerts() {
     const [open, setOpen] = React.useState(false);
     const [params, setParams] = React.useState<null | AlertParamsType>(null);
-    const appContext = useAppContext()
+    const appContext = useAppContext();
+    const timerId = React.useRef<NodeJS.Timeout>();
 
     const openAlert = (params: AlertParamsType) => {
         setOpen(true)
         setParams(params)
+        clearTimeout(timerId.current)
+        timerId.current = setTimeout(() => {
+            setOpen(false)
+            clearTimeout(timerId.current)
+        }, 2000)
     }
+
     React.useEffect(() => {
         appContext.eventEmitter.on(ALERT_EVENT, openAlert)
         return () => {
+            clearTimeout(timerId.current)
             appContext.eventEmitter.removeListener(ALERT_EVENT, openAlert)
         }
     }, []);
+
+    const onClose = () => {
+        setOpen(false);
+        clearTimeout(timerId.current)
+    }
 
     return (
         <Container maxWidth="md">
@@ -36,9 +49,7 @@ export default function TransitionAlerts() {
                                 aria-label="close"
                                 color="inherit"
                                 size="small"
-                                onClick={() => {
-                                    setOpen(false);
-                                }}
+                                onClick={onClose}
                             >
                                 <CloseIcon fontSize="inherit" />
                             </IconButton>

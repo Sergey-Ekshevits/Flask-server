@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {styled} from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
@@ -7,28 +7,29 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
-import IconButton, {IconButtonProps} from '@mui/material/IconButton';
+import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import {red} from '@mui/material/colors';
+import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {STATIC_AVATAR_URL, STATIC_POST_URL} from '../constant';
+import { STATIC_AVATAR_URL, STATIC_POST_URL } from '../constant';
 import * as DOMPurify from 'dompurify';
-import {CardActionArea, Menu, MenuItem} from '@mui/material';
-import {Link, NavLink} from "react-router-dom";
-import {PostDto} from "../types";
-import {EmptyPicture} from './EmptyPicture';
+import { Box, CardActionArea, Menu, MenuItem } from '@mui/material';
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { PostDto } from "../types";
+import { EmptyPicture } from './EmptyPicture';
+import { Loader } from './Loader';
 
 interface ExpandMoreProps extends IconButtonProps {
     expand: boolean;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-    const {expand, ...other} = props;
+    const { expand, ...other } = props;
     return <IconButton {...other} />;
-})(({theme, expand}) => ({
+})(({ theme, expand }) => ({
     transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
     marginLeft: 'auto',
     transition: theme.transitions.create('transform', {
@@ -40,13 +41,15 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 type Props = {
     post: PostDto;
     isOwner: boolean;
+    deletePost: (id: string) => Promise<void>;
 }
-const menu = [{title: "Удалить", action: "delete"}, {title: "Редактировать", action: "edit"}]
+const menu = [{ title: "Удалить", action: "delete" }, { title: "Редактировать", action: "edit-post" }]
 
-export const PostCard = ({post, isOwner}: Props) => {
+export const PostCard = ({ post, isOwner, deletePost }: Props) => {
     const [expanded, setExpanded] = React.useState(false);
+    const [loader, setLoader] = React.useState(false);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
-
+    const navigate = useNavigate();
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
@@ -55,10 +58,36 @@ export const PostCard = ({post, isOwner}: Props) => {
         setAnchorElNav(event.currentTarget);
     };
 
+    const onDeletePost = async (id: string) => {
+        setLoader(true)
+        await deletePost(id)
+        setLoader(false)
+    }
+
     const handleClosUserMenu = (action: string) => {
-        console.log(action);
+        if (action === "close") {
+            setAnchorElNav(null);
+            return
+        } else if (action === "edit-post") {
+            navigate(`${action}/${post.id}`);
+        } else if (action === "delete") {
+            onDeletePost(post.id);
+        }
         setAnchorElNav(null);
     };
+
+    const renderLoading = () => {
+        return (
+            <Box sx={{
+                position: "absolute",
+                zIndex: 3,
+                width: "100%",
+                height: "100%", backgroundColor: "rgba(0,0,0,0.4)"
+            }}>
+                <Loader />
+            </Box>
+        )
+    }
 
 
     const data = new Date(Number(post.date_created))
@@ -71,7 +100,7 @@ export const PostCard = ({post, isOwner}: Props) => {
                 whiteSpace: "nowrap",
                 maxWidth: "140px"
             }}>
-                {post.title}
+                {post.user.name}
             </Typography>
 
         )
@@ -107,26 +136,27 @@ export const PostCard = ({post, isOwner}: Props) => {
     const renderPicture = () => {
         if (!post.post_pic) {
             return (
-                <EmptyPicture height={"194"}/>
+                <EmptyPicture height={"194"} />
             )
         }
         return (
             <CardMedia
                 component="img"
                 height="194"
+                sx={{ objectFit: "cover" }}
                 image={STATIC_POST_URL + "/" + post.post_pic}
                 alt="Paella dish"
             />
         )
     }
     return (
-        <Card sx={{maxWidth: 345, height: "100%", display: "flex", flexDirection: "column"}}>
+        <Card sx={{ maxWidth: 345, height: "100%", display: "flex", flexDirection: "column" }}>
             <CardHeader
                 disableTypography={false}
                 avatar={
                     <Avatar
                         src={STATIC_AVATAR_URL + "\\" + post.user.avatar_url}
-                        sx={{bgcolor: red[500]}} aria-label="recipe">
+                        sx={{ bgcolor: red[500] }} aria-label="recipe">
                         R
                     </Avatar>
                 }
@@ -134,7 +164,7 @@ export const PostCard = ({post, isOwner}: Props) => {
                     <>
                         {isOwner && (<>
                             <IconButton onClick={handleOpenUserMenu} aria-label="settings">
-                                <MoreVertIcon/>
+                                <MoreVertIcon />
                             </IconButton>
                             {renderMenu()}
                         </>)
@@ -144,17 +174,25 @@ export const PostCard = ({post, isOwner}: Props) => {
                 title={renderTitle()}
                 subheader={data.toDateString()}
             />
-            <Link to={`/post/${post.id}`} style={{textDecoration: "none"}}>
-                <CardActionArea>
+            <CardActionArea sx={{ height: "100%", alignItems: "flex-start", justifyContent: "flex-start", display: "flex", flexDirection: "column" }}>
+                {loader && renderLoading()}
+                <Link to={`/post/${post.id}`} style={{
+                    textDecoration: "none", height: "100%",
+                    width: "100%",
+                    position: "relative"
+                }}>
                     {renderPicture()}
 
                     <CardContent>
+                        <Typography sx={{ fontWeight: "bold" }} component={'h3'} variant="h5" color="text.secondary">
+                            {post.title}
+                        </Typography>
                         <Typography component={'span'} variant="body2" color="text.secondary">
-                            <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post.body)}}/>
+                            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body.slice(0, 200) + "<p> ...</p>") }} />
                         </Typography>
                     </CardContent>
-                </CardActionArea>
-            </Link>
+                </Link>
+            </CardActionArea>
             {/* <CardActions disableSpacing sx={{ marginTop: "auto" }}>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon />
