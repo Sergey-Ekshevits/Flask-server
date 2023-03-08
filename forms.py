@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SearchField, SubmitField, BooleanField,PasswordField, SelectField, EmailField
+from wtforms import StringField, SearchField, SubmitField, BooleanField,PasswordField, SelectField, EmailField, SelectMultipleField, widgets
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import DataRequired, Email, Length
 from flask_ckeditor import CKEditorField
@@ -29,10 +29,13 @@ class PostField(FlaskForm):
     title = StringField("Post title", validators=[DataRequired(),Length(min=4,max=99)])
     body = CKEditorField("Body", validators=[DataRequired(), Length(min=20,max=1199)])
     post_pic = FileField('Post picture', default=None, validators=[FileAllowed(['jpg','jpeg','png'],"Only images!")])
+    category = SelectMultipleField ('Категории', default=None)
+
     submit = SubmitField("Отправить")
+
 class CommentField(FlaskForm):
     content = StringField("Comment", validators=[DataRequired(), Length(min=4,max=400)])
-    submit = SubmitField("Комментировать")
+    submit = SubmitField("Комментировать", coerce=int)
 class SelectPostsFilter(FlaskForm):
     my_post = BooleanField('My Posts', default="checked")
     selection = SelectField('Select posts', choices=[('all','All posts'),('last_day', 'Last day'),('last_week','Last week'),('last_month', 'Last month')])

@@ -17,6 +17,10 @@ post = Blueprint('post', __name__,
 @post.route('/add_post', methods=['GET', 'POST'])
 def add_post():
     form = PostField()
+    categories=Category.query.all()
+    cat_list=[(i.id, i.name) for i in categories]
+    form.category.choices=cat_list
+    # print(cat_list)
     if request.method == "POST" and form.validate_on_submit():
         header = request.form.get('title')
         body = request.form.get('body')
