@@ -1,6 +1,8 @@
 import calendar
 import time
 
+from sqlalchemy.exc import PendingRollbackError, IntegrityError
+
 from db.Category import Category
 from db.UserTelegram import UserTelegram
 from flask import Blueprint, render_template, request, flash, redirect, url_for
@@ -40,11 +42,20 @@ def add_post():
         post = Post(title=header, body=body, owner=current_user.id, date_created=time_stamp, post_pic=post_pic)
         try:
             db.session.add(post)
+            if form.category.data:
+                posted = Post.query.filter_by(date_created=time_stamp).first()
+                cats = Category.query.filter(Category.id.in_(form.category.data)).all()
+                for cat in cats:
+                    posted.category.append(cat)
             db.session.commit()
             return redirect(url_for('index'))
-        except:
-            print("NO DATAAAAAAAAAAAAAAAAAAAAAAAAA")
-            flash("Данные не сохранились")
+        # except PendingRollbackError:
+        #     db.session.rollback()
+        #     print("NO DATAAAAAAAAAAAAAAAAAAAAAAAAA")
+        except IntegrityError:
+            db.session.rollback()
+            print("NO DA")
+            flash("Данные не сохранились. Возможно, уже есть пост с таким же заголовком")
     return render_template('add_post.html', form=form)
 
 @post.route('/post/<id>',methods=['GET', 'POST'])

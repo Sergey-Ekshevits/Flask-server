@@ -36,3 +36,4 @@ def delete_file(filename, folder=''):
     path = join(UPLOADS_PATH+folder, filename)
     if os.path.isfile(path):
         os.remove(path)
+
