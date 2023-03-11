@@ -33,10 +33,10 @@ export class PostStore {
         }
         try {
             this.status = "loading"
-            // const post = await restService.getWithAttempt("/post/" + id)
-            //     .then((res) => res.json()).catch(() => [])
+            const post = await restService.postWithAttempt("/post/" + id)
+                .then((res) => res.json()).catch(() => {})
             //     console.log({posts});
-            const post = this.posts.find((p) => Number(id) === p.id)
+            // const post = this.posts.find((p) => Number(id) === p.id)
             this.status = "done"
             return post;
         } catch (err) {
@@ -52,15 +52,14 @@ export class PostStore {
         }
         try {
             const data = new FormData()
-            data.append("title", JSON.stringify(title))
-            data.append("body", JSON.stringify(body))
+            data.append("title", title.trim())
+            data.append("body", body.trim())
             if (image) {
                 data.append("file", image)
             }
             this.status = "loading"
-            const response = await restService.patchWithAttempt(`/post/${id}`,
+            const response = await restService.patchMultiData(`/post/${id}`,
                 data,
-                true
             )
             console.log({response});
             if (response.status === 200) {

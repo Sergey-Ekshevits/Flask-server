@@ -1,4 +1,4 @@
-import {API_URL} from "../constant"
+import { API_URL } from "../constant"
 
 export class RestService {
 
@@ -10,63 +10,100 @@ export class RestService {
         this.userStore = userStore
     }
 
-    getAuthorizationHeader = (refresh, isForm) => {
-        const contentType = isForm ? "application/x-www-form-urlencoded" : "application/json";
+    getAuthorizationHeader = (refresh) => {
         const token = refresh ? this.userStore.refresh_token : this.userStore.access_token
         return {
-            "Content-type": contentType,
             Authorization: `Bearer ${token}`
         }
     }
 
     getHeader = () => {
         return {
-            "Content-type": "application/json",
+            "Content-Type": "application/json",
         }
     }
 
-    fetch = async (endpoint, data = {}, isForm = false, attempt = 2) => {
+    getFormDataHeader = () => {
+        return {
+            // "Content-type": "application/x-www-form-urlencoded",
+            "Content-Type": "multipart/form-data",
+        }
+    }
+
+    fetchAttempts = async (endpoint, data = {}, additionalHeader = {}, attempt = 2) => {
         const url = this.API_URL + endpoint
-        const headers = this.getAuthorizationHeader(false, true)
-        return fetch(url, {...data, headers}).then(async (response) => {
+        const headers = { ...this.getAuthorizationHeader(), ...additionalHeader }
+        const options = { ...data, headers };
+        console.log({ options });
+
+        return fetch(url, options).then(async (response) => {
+            console.log({ response });
+            console.log({ attempt });
             if (attempt < 0) {
                 this.userStore.logout()
                 return
             }
             if (response.status === 401) {
-                await this.userStore.refreshToken()
-                return this.fetch(endpoint, data, --attempt)
+                try {
+                    await this.userStore.refreshToken()
+                } catch (error) {
+                    console.log({error});
+                    return;
+                }
+                return this.fetchAttempts(endpoint, data, additionalHeader, --attempt)
             }
             return response;
+        }).catch((error) => {
+            console.log({ error });
         })
     }
 
     getWithAttempt = async (url) => {
-        return this.fetch(url)
+        const additionalHeader = this.getHeader()
+        return this.fetchAttempts(url, {}, additionalHeader)
     }
 
-    patchWithAttempt = async (url, body, isForm) => {
-        return this.fetch(url, {
-            method: "PATCH",
-            body
-        }, isForm)
+    patchWithAttempt = async (url, body) => {
+        const additionalHeader = this.getHeader()
+        return this.fetchAttempts(url,
+            {
+                method: "PATCH",
+                body,
+            },
+            additionalHeader
+        )
+    }
+
+    patchMultiData = async (url, body) => {
+        return this.fetchAttempts(url,
+            {
+                method: "PATCH",
+                body,
+            },
+        )
     }
 
     postWithAttempt = async (url, body) => {
-        return this.fetch(url, {
-            method: "POST",
-            body
-        })
+        const additionalHeader = this.getHeader()
+        return this.fetchAttempts(url,
+            {
+                method: "POST",
+                body
+            },
+            additionalHeader)
     }
 
     deleteWithAttempt = async (url) => {
-        return this.fetch(url, {
+        return this.fetchAttempts(url, {
             method: "DELETE"
         })
     }
 
     post = async (url, body, refresh) => {
-        const headers = this.getAuthorizationHeader(refresh)
+        const headers = {
+            ...this.getAuthorizationHeader(refresh),
+            ...this.getHeader(),
+        }
         return fetch(this.API_URL + url, {
             method: "POST",
             headers,
@@ -75,7 +112,10 @@ export class RestService {
     }
 
     get = async (url) => {
-        const headers = this.getAuthorizationHeader()
+        const headers = {
+            ...this.getAuthorizationHeader(),
+            ...this.getHeader(),
+        }
         return fetch(this.API_URL + url, {
             headers
         })
