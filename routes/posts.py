@@ -93,8 +93,6 @@ def delete_post(id):
         Post.query.filter_by(id=id).delete()
         db.session.commit()
     return redirect(request.referrer)
-
-
 @post.route('/change_post/<id>', methods=['GET','POST'])
 @login_required
 def change_post(id):
