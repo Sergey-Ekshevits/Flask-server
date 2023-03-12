@@ -6,6 +6,8 @@ from flask import Flask
 from flask import render_template, request
 from flask_login import LoginManager, current_user, login_required
 # from flask_marshmallow import Marshmallow
+from sqlalchemy import desc
+
 from forms import SearchForm
 from flask_migrate import Migrate
 from flask_ckeditor import CKEditor
@@ -16,6 +18,7 @@ from flask_jwt_extended import JWTManager
 from db.Category import Category
 from db.Post import Post
 from db.User import User
+from db.post_category_table import ass_post_category
 from db.db import ma
 from db.db import db
 from routes.api import api
@@ -49,7 +52,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Авторизуйтесь для доступа к странице'
 login_manager.login_message_category = 'success'
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, render_as_batch=True)
 ckeditor = CKEditor(app)
 POSTS_PER_PAGE = 4
 
@@ -111,8 +114,12 @@ def index():
     time_stamp = calendar.timegm(current_GMT)
     time_to_check = datetime.fromtimestamp(time_stamp)
     query = Post.query
-    cats = category_view()
-    print(cats)
+    catt = category_view()
+    cats = [c[0] for c in category_view()]
+    categs = dict(category_view())
+    # for c in cats:
+    #     categs.append(c[0])
+    print(categs)
     if request.method == "GET":
         if selection == 'last_month':
             ts = str(datetime.timestamp(time_to_check + relativedelta(months=-1)))
@@ -140,13 +147,16 @@ def index():
         pagination=pagination,
         paginated=paginated,
         form=form,
-        cats=cats
+        cats=catt
     )
 
 def category_view():
-    categories = Category.query.all()
-    # print(total_posts)
-    return categories
+    # categories = Category.query.all()
+    # total_posts = db.session.query(Category, db.func.count(ass_post_category.c.post_id)).outerjoin(Category).all()
+    # total_posts2 = Category.query.count(ass_post_category.c.post_id).all()
+    total_posts = db.session.query(Category,db.func.count(ass_post_category.c.post_id).label('total')).join(ass_post_category).group_by(Category).order_by(desc('total')).all()
+    # print(total_posts3)
+    return total_posts
 @app.route('/search', methods=['GET'])
 def search():
     searched = request.args.get('search_field')

@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, event
+
+from db import Category
 from db.db import db, ma
 from sqlalchemy_serializer import SerializerMixin
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, fields
@@ -10,10 +12,11 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, fields
 #                     )
 from db.post_category_table import ass_post_category
 
-class Post(db.Model,SerializerMixin):
+
+class Post(db.Model, SerializerMixin):
     __tablename__ = "user_posts"
     serialize_only = ()
-    serialize_rules = ('-comments.post.comments','-category.post')
+    serialize_rules = ('-comments.post.comments', '-category.post')
     id = Column(Integer, primary_key=True)
     title = Column(String, unique=True)
     body = Column(String, nullable=False)
@@ -23,7 +26,9 @@ class Post(db.Model,SerializerMixin):
     user = db.relationship('User', backref='user_posts')
     comments = db.relationship('Comments', backref='post')
     post_pic = Column(String)
-    category = db.relationship('Category',secondary = ass_post_category, backref='post')
+    category = db.relationship('Category', secondary=ass_post_category, backref=db.backref("post",
+                                                                                           cascade="all",
+                                                                                           passive_deletes=True))
 
     # def __repr__(self):
     #     return "<User(name='%s', email='%s', password='%s')>" % (
@@ -36,4 +41,3 @@ class Post(db.Model,SerializerMixin):
 #     class Meta:
 #         model = Post
 #         user = fields.Nested(UserScheme)
-

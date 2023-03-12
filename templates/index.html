@@ -17,9 +17,9 @@
     {{ super() }}
         {% if cats %}
             Популярные категории:
-            {% for category in cats[0:4] %}
+            {% for category, value in cats %}
                 <a href="{{ url_for('post.show_category', category_name=category.name) }}" class="btn btn-outline-dark">
-                    {{ category.name }}
+                    {{ category.name }} {{ value }}
                 </a>
             {% endfor %}
         {% endif %}
