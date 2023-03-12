@@ -151,10 +151,11 @@ def index():
     )
 
 def category_view():
+    LIMIT_CATEGORIES = 4
     # categories = Category.query.all()
     # total_posts = db.session.query(Category, db.func.count(ass_post_category.c.post_id)).outerjoin(Category).all()
     # total_posts2 = Category.query.count(ass_post_category.c.post_id).all()
-    total_posts = db.session.query(Category,db.func.count(ass_post_category.c.post_id).label('total')).join(ass_post_category).group_by(Category).order_by(desc('total')).all()
+    total_posts = db.session.query(Category,db.func.count(ass_post_category.c.post_id).label('total')).join(ass_post_category).group_by(Category).order_by(desc('total')).limit(LIMIT_CATEGORIES).all()
     # print(total_posts3)
     return total_posts
 @app.route('/search', methods=['GET'])
