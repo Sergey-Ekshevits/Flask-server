@@ -111,6 +111,8 @@ def index():
     time_stamp = calendar.timegm(current_GMT)
     time_to_check = datetime.fromtimestamp(time_stamp)
     query = Post.query
+    cats = category_view()
+    print(cats)
     if request.method == "GET":
         if selection == 'last_month':
             ts = str(datetime.timestamp(time_to_check + relativedelta(months=-1)))
@@ -137,10 +139,14 @@ def index():
         total=total,
         pagination=pagination,
         paginated=paginated,
-        form=form
+        form=form,
+        cats=cats
     )
 
-
+def category_view():
+    categories = Category.query.all()
+    # print(total_posts)
+    return categories
 @app.route('/search', methods=['GET'])
 def search():
     searched = request.args.get('search_field')
