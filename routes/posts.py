@@ -10,6 +10,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from forms import PostField, CommentField
 from db.Post import Post
 from db.Comments import Comments
+from db.post_category_table import ass_post_category
 from db.db import db
 from bot import bot
 from functions import upload_pic, delete_file
@@ -86,6 +87,7 @@ def delete_comment(id):
 @post.route('/delete/<id>')
 def delete_post(id):
     post = Post.query.filter_by(id=id).first()
+    asses = db.session.query(ass_post_category).filter(ass_post_category.c.post_id == post.id).all()
     post_pic = post.post_pic
     if post and current_user.id == post.user.id:
         if post_pic:
