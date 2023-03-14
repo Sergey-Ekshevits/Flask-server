@@ -87,12 +87,13 @@ def delete_comment(id):
 @post.route('/delete/<id>')
 def delete_post(id):
     post = Post.query.filter_by(id=id).first()
-    asses = db.session.query(ass_post_category).filter(ass_post_category.c.post_id == post.id).all()
+    asses = db.session.query(ass_post_category).filter(ass_post_category.c.post_id == post.id)
     post_pic = post.post_pic
     if post and current_user.id == post.user.id:
         if post_pic:
             delete_file(post_pic, folder="post-picture")
         Post.query.filter_by(id=id).delete()
+        asses.delete()
         db.session.commit()
     return redirect(request.referrer)
 @post.route('/change_post/<id>', methods=['GET','POST'])
