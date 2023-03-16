@@ -19,7 +19,7 @@
             <p>{{ form.hidden_tag() }}</p>
             <p>{{ form.post_pic.label() }} {{ form.post_pic() }}</p>
             <span class="validation_error">{{ ', '.join(form.post_pic.errors) }}</span><br>
-            <p>{{ form.category.label() }} {{ form.category() }}</p>
+            <p>{{ form.category.label() }} {{ form.category(class="category") }}</p>
             <p>{{ form.title.label() }} {{ form.title() }}</p>
             <p>{{ form.body.label() }} {{ form.body() }}</p>
             <p>{{ form.submit() }}
