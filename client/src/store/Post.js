@@ -1,5 +1,5 @@
-import {makeAutoObservable} from "mobx"
-import {restService} from "./context"
+import { makeAutoObservable } from "mobx"
+import { restService } from "./context"
 
 export class PostStore {
     posts = []
@@ -16,10 +16,12 @@ export class PostStore {
         }
         try {
             this.status = "loading"
-            const posts = await restService.getWithAttempt("/posts")
-                .then((res) => res.json()).catch(() => [])
-            console.log({posts});
-            this.posts = posts
+            const response = await restService.getWithAttempt("/posts")
+            console.log({response});
+            if (response.status === 200) {
+                const posts = await response.json().catch(() => [])
+                this.posts = posts
+            }
             this.status = "done"
         } catch (err) {
             this.status = "error"
@@ -34,7 +36,7 @@ export class PostStore {
         try {
             this.status = "loading"
             const post = await restService.postWithAttempt("/post/" + id)
-                .then((res) => res.json()).catch(() => {})
+                .then((res) => res.json()).catch(() => { })
             //     console.log({posts});
             // const post = this.posts.find((p) => Number(id) === p.id)
             this.status = "done"
@@ -61,7 +63,7 @@ export class PostStore {
             const response = await restService.patchMultiData(`/post/${id}`,
                 data,
             )
-            console.log({response});
+            console.log({ response });
             if (response.status === 200) {
                 this.status = "success"
                 const json = await response.json();
@@ -79,11 +81,11 @@ export class PostStore {
 
     deletePost = async (id) => {
         try {
-            console.log({id})
+            console.log({ id })
             // await new Promise((res) => setTimeout(res, 3000))
             const response = await restService.deleteWithAttempt(`/post/${id}`)
             // const response = {}
-            console.log({response});
+            console.log({ response });
             if (response.status === 200) {
                 this.status = "success"
 

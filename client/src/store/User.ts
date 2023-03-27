@@ -34,7 +34,6 @@ export class UserStore {
             }))
             const json = await response.json();
             if (response.status === 200) {
-                console.log();
                 this.access_token = json.access_token
                 this.refresh_token = json.refresh_token
                 this.user = json.user

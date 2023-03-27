@@ -34,12 +34,12 @@ export class RestService {
         const url = this.API_URL + endpoint
         const headers = { ...this.getAuthorizationHeader(), ...additionalHeader }
         const options = { ...data, headers };
-        console.log({ options });
-
         return fetch(url, options).then(async (response) => {
-            console.log({ response });
-            console.log({ attempt });
             if (attempt < 0) {
+                this.userStore.logout()
+                return
+            }
+            if (response.status === 422) {
                 this.userStore.logout()
                 return
             }

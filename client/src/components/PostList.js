@@ -2,6 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import { PostCard } from "./PostCard"
 
 export const PostList = ({ posts, user, deletePost }) => {
+    
     return (
         <>
             <Typography mt={2} textAlign="center">Посты</Typography>
