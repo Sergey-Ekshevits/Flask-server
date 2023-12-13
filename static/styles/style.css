@@ -70,6 +70,7 @@ ul {
 
 .category input[type=checkbox] + label {
     cursor: pointer;
+    user-select: none;
     align-items: center;
     display: flex;
     background-color: #ffffff;

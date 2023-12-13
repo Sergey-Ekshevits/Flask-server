@@ -1,15 +1,15 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from db.User import User
-from db.Post import Post
+from db.models import User
+from db.models import Post
 from db.db import db
 from forms import LoginForm, RegisterForm, ChangeProfileForm
 from functions import upload_avatar
 
-
 auth = Blueprint('auth', __name__,
                  template_folder='templates')
+
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -20,7 +20,6 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         next_url = request.form.get("next")
-        # print(next_url)
         if not password or not email:
             flash("Введите данные")
             return render_template('authorization.html', form=form)
@@ -35,12 +34,12 @@ def login():
         return redirect(url_for('index'))
     return render_template('authorization.html', form=form, next=request.url)
 
+
 @auth.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("auth.login"))
-
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -57,12 +56,10 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash("Успешная регистрация")
-            print("ok")
             login_user(new_user, remember=True)
-            return redirect(url_for('index'))
+            return redirect(url_for('index.index_page'))
         else:
             flash("Ошибка регистрации")
-            print("Nok")
         return render_template('registration.html', form=form)
     return render_template('registration.html', form=form)
 
@@ -90,4 +87,3 @@ def change_profile(id):
         except:
             flash("Данные не сохранились")
     return render_template("change_profile.html", current_user=current_user, id=id, form=form)
-

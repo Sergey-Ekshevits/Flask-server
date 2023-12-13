@@ -1,6 +1,6 @@
 import telebot
 from telebot import types
-from db.UserTelegram import UserTelegram
+from db.models import UserTelegram
 from db.db import db
 from dotenv import load_dotenv
 import os

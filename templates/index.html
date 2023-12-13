@@ -43,7 +43,7 @@
         <a href="{{ url_for("post.add_post") }}" class="btn btn-primary">Создать пост</a>
     {% endif %}
 
-    <form action="{{ url_for("index") }}" method="get">
+    <form action="{{ url_for("index.index_page") }}" method="get">
         {#      {% if current_user.is_authenticated %}#}
         {#        <label>#}
         {#            Свои посты#}

@@ -40,7 +40,7 @@
                 </div>
             {% endif %}
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="{{ url_for('index') }}" class="nav-link px-2 link-secondary">Home</a></li>
+                <li><a href="{{ url_for('index.index_page') }}" class="nav-link px-2 link-secondary">Home</a></li>
                 <li><a href="#" class="nav-link px-2 link-dark">Features</a></li>
                 {#                <li><a href="#" class="nav-link px-2 link-dark">Pricing</a></li>#}
                 {#                <li><a href="#" class="nav-link px-2 link-dark">FAQs</a></li>#}
@@ -48,7 +48,7 @@
             </ul>
             <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
                 <form
-                        action="{{ url_for('search') }}" method="get" class="form-contact" name="search">
+                        action="{{ url_for('index.search') }}" method="get" class="form-contact" name="search">
                     <div class="input-group">
                         {{ search_form.search_field(class_="form-control") }}
                         {{ search_form.submit(class_="btn btn-primary") }}
@@ -73,15 +73,15 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 <script
-  src="https://code.jquery.com/jquery-3.6.3.js"
-  integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
-  crossorigin="anonymous"></script>
+        src="https://code.jquery.com/jquery-3.6.3.js"
+        integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+        crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-{##}
-{#    $('.dropdown-my').select2({#}
-{#        closeOnSelect: false#}
-{#    });#}
+    {##}
+    {#    $('.dropdown-my').select2({#}
+    {#        closeOnSelect: false#}
+    {#    });#}
 </script>
 </body>
 </html>

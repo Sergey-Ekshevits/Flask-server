@@ -6,11 +6,11 @@ from flask_login import current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # from db.UserTelegram import UserTelegram
-from db.User import User
+from db.models import User
 from db.db import db
-from db.Post import Post
+from db.models import Post
 # from db.Category import Category
-from db.Comments import Comments
+from db.models import Comments
 from flask import jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, unset_jwt_cookies
 from flask_jwt_extended import get_jwt_identity

@@ -6,12 +6,12 @@ UPLOADS_PATH = join(dirname(realpath(__file__)), '.\\static\\')
 UPLOADS_AVATAR_PATH = join(dirname(realpath(__file__)), '.\\static\\avatars')
 UPLOADS_POST_PIC_PATH = join(dirname(realpath(__file__)), '.\\static\\post-picture')
 
-def upload_pic(file,folder,post):
+def upload_pic(file,folder):
     if not os.path.exists(UPLOADS_PATH+folder):
         os.mkdir(UPLOADS_PATH+folder)
     # if new:
-        # if post.post_pic:
-        #     delete_file(post.post_pic)
+    #     if post.post_pic:
+    #         delete_file(post.post_pic)
     file_ext = splitext(secure_filename(file.filename))[1]
     filename = str(uuid.uuid4()) + file_ext
     path = join(UPLOADS_PATH+folder, filename)

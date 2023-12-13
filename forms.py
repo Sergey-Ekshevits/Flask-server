@@ -32,7 +32,7 @@ class PostField(FlaskForm):
     title = StringField("Post title", validators=[DataRequired(),Length(min=4,max=99)])
     body = CKEditorField("Body", validators=[DataRequired(), Length(min=20,max=1199)])
     post_pic = FileField('Post picture', default=None, validators=[FileAllowed(['jpg','jpeg','png'],"Only images!")])
-    category = SelectFieldMultiCheckbox ('Категории', default=None, coerce=int)
+    category = SelectFieldMultiCheckbox('Категории', default=None, coerce=int)
     submit = SubmitField("Отправить")
 
 class CommentField(FlaskForm):
